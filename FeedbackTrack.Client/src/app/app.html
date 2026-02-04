@@ -1,0 +1,28 @@
+<div class="container">
+  <nav *ngIf="authService.isLoggedIn()">
+    <h1><a routerLink="/" style="text-decoration: none; color: inherit;">FeedbackTrack</a></h1>
+    <ul>
+      <li *ngIf="getUserRole() === 'Employee'"><a routerLink="/employee-dashboard" routerLinkActive="active">My
+          Feedback</a></li>
+      <li *ngIf="getUserRole() === 'Manager'"><a routerLink="/manager-dashboard" routerLinkActive="active">Team
+          Overview</a></li>
+      <li *ngIf="getUserRole() === 'Admin'"><a routerLink="/admin-dashboard" routerLinkActive="active">Admin Portal</a>
+      </li>
+      <li *ngIf="getUserRole() === 'Manager' || getUserRole() === 'Admin'"><a routerLink="/reports"
+          routerLinkActive="active">Reports</a></li>
+      <li><a (click)="logout()" style="cursor: pointer;">Logout</a></li>
+    </ul>
+  </nav>
+
+  <nav *ngIf="!authService.isLoggedIn()">
+    <h1>FeedbackTrack</h1>
+    <ul>
+      <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+      <li><a routerLink="/register" routerLinkActive="active">Register</a></li>
+    </ul>
+  </nav>
+
+  <main style="margin-top: 30px;">
+    <router-outlet></router-outlet>
+  </main>
+</div>

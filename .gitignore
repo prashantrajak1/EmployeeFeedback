@@ -1,0 +1,28 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+feedbacktrack.db
+
+# Angular
+dist/
+tmp/
+out-tsc/
+bazel-out/
+/node_modules/
+.angular/
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+# System
+Thumbs.db
+ehthumbs.db
+Desktop.ini

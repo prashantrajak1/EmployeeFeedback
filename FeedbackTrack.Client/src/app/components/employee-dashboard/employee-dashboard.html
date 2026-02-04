@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="flex-between" style="margin-bottom: 20px;">
+        <h2>My Feedback Space</h2>
+        <div>
+            <a routerLink="/give-feedback" class="btn btn-primary" style="margin-right: 10px;">Submit Feedback</a>
+            <a routerLink="/give-recognition" class="btn btn-success">Give Recognition</a>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Recognitions Section -->
+        <div class="card">
+            <h3>My Badges & Kudos</h3>
+            <div *ngIf="recognitions.length === 0" style="color: var(--text-muted);">
+                No recognitions yet. Keep up the good work!
+            </div>
+            <div *ngFor="let rec of recognitions" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <div style="font-weight: bold; color: var(--primary-color);">{{ rec.badge }} (+{{ rec.points }} pts)
+                </div>
+                <div style="font-size: 0.9rem;">From: {{ rec.fromUser?.name || 'Unknown' }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ rec.date | date }}</div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="card">
+            <h3>My Feedback</h3>
+            <div *ngIf="feedbacks.length === 0" style="color: var(--text-muted);">
+                No feedback received yet.
+            </div>
+            <div *ngFor="let msg of feedbacks" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <div style="font-weight: bold;">{{ msg.category }}</div>
+                <p>"{{ msg.comments }}"</p>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                    From: {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUser?.name || 'Unknown') }} • {{ msg.date | date
+                    }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

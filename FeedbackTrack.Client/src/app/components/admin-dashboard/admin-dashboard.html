@@ -1,0 +1,75 @@
+<div class="container">
+    <h2>Admin Portal - System Administration</h2>
+
+    <div class="dashboard-grid">
+        <!-- Analytics & Configuration -->
+        <div class="card">
+            <h3>System Analytics & Config</h3>
+            <div *ngIf="stats" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                <div
+                    style="flex: 1; min-width: 100px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">{{ stats.activeUsers
+                        }}</div>
+                    <div style="font-size: 0.7rem; color: #666;">USERS</div>
+                </div>
+                <div
+                    style="flex: 1; min-width: 100px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--success-color);">{{
+                        stats.totalRecognitions }}</div>
+                    <div style="font-size: 0.7rem; color: #666;">KUDOS</div>
+                </div>
+                <div
+                    style="flex: 1; min-width: 100px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #666;">{{ stats.totalFeedback }}</div>
+                    <div style="font-size: 0.7rem; color: #666;">FEEDBACK</div>
+                </div>
+            </div>
+
+            <h4>Feedback Categories</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                <span *ngFor="let cat of categories" class="badge"
+                    style="background: var(--primary-color); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">
+                    {{ cat }}
+                </span>
+                <button class="btn btn-primary" style="padding: 2px 10px; font-size: 0.8rem;">+ Add</button>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="card">
+            <h3>User Management</h3>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 2px solid #eee;">
+                            <th style="padding: 8px;">Name</th>
+                            <th style="padding: 8px;">Role</th>
+                            <th style="padding: 8px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let u of users" style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 8px;">{{ u.name }}</td>
+                            <td style="padding: 8px;"><span
+                                    style="font-size: 0.8rem; background: #eee; padding: 2px 6px; border-radius: 4px;">{{
+                                    u.role?.roleName }}</span></td>
+                            <td style="padding: 8px;">
+                                <button (click)="toggleUserStatus(u)" class="btn btn-danger"
+                                    style="padding: 2px 8px; font-size: 0.7rem;">Deactivate</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard Expansion Placeholder -->
+    <div class="card" style="margin-top: 30px;">
+        <h3>Organizational Analytics</h3>
+        <div
+            style="height: 150px; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #999;">
+            Engagement Trends Visualization Placeholder
+        </div>
+    </div>
+</div>

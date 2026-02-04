@@ -1,0 +1,34 @@
+<div class="container">
+    <h2>Management Reports & Stats</h2>
+
+    <div *ngIf="isLoading" style="text-align: center; margin-top: 40px;">
+        Loading reports...
+    </div>
+
+    <div *ngIf="!isLoading && stats" class="dashboard-grid" style="margin-top: 20px;">
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color);">{{ stats.totalFeedback }}
+            </div>
+            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
+                Total Feedback Items</div>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: var(--success-color);">{{ stats.totalRecognitions
+                }}</div>
+            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
+                Total Kudos Awarded</div>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: bold; color: #666;">{{ stats.activeUsers }}</div>
+            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
+                Active Users</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 30px;">
+        <h3>Insights</h3>
+        <p>Engagement is steady. Encourage more peer-to-peer Kudos to boost morale in the IT and Sales departments.</p>
+    </div>
+</div>
