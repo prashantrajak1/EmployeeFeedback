@@ -57,7 +57,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // DI for Services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -100,5 +100,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/", () => "FeedbackTrack API is running. use /swagger for API docs.");
+
+// Seed Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedUsersAsync(context);
+}
 
 app.Run();

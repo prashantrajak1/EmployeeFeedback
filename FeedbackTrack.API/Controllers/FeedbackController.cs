@@ -1,4 +1,5 @@
 using FeedbackTrack.API.Data;
+using FeedbackTrack.API.DTOs;
 using FeedbackTrack.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +21,26 @@ namespace FeedbackTrack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitFeedback(TFeedback feedback)
+        public async Task<IActionResult> SubmitFeedback(FeedbackCreateDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            feedback.FromUserId = userId; // Enforce sender
-            feedback.Date = DateTime.UtcNow;
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            var userId = int.Parse(userIdStr);
+
+            var feedback = new TFeedback
+            {
+                FromUserId = userId,
+                ToUserId = dto.ToUserId,
+                Description = dto.Description,
+                IsAnonymous = dto.IsAnonymous,
+                Date = DateTime.UtcNow
+            };
 
             _context.TFeedbacks.Add(feedback);
             await _context.SaveChangesAsync();
-            return Ok(feedback);
+            
+            return Ok(new { message = "Feedback submitted successfully" });
         }
 
         [HttpGet("my-feedback")]

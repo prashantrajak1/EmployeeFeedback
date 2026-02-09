@@ -15,6 +15,10 @@ namespace FeedbackTrack.API.Data
         public DbSet<TReview> TReviews { get; set; }
         public DbSet<TNotification> TNotifications { get; set; }
 
+        // Views and SP results
+        public DbSet<vw_UserProfileView> UserProfiles { get; set; }
+        public DbSet<sp_UserFeedbackStats> UserFeedbackStats { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -56,6 +60,18 @@ namespace FeedbackTrack.API.Data
                 new TDepartment { Id = 2, DepartmentName = "HR" },
                 new TDepartment { Id = 3, DepartmentName = "Sales" }
             );
+
+            // Configure Views and Keyless Entities
+            modelBuilder.Entity<vw_UserProfileView>(eb =>
+            {
+                eb.HasNoKey();
+                eb.ToView("vw_UserProfileView");
+            });
+
+            modelBuilder.Entity<sp_UserFeedbackStats>(eb =>
+            {
+                eb.HasNoKey();
+            });
         }
     }
 }

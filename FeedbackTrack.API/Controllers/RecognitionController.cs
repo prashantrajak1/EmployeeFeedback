@@ -1,4 +1,5 @@
 using FeedbackTrack.API.Data;
+using FeedbackTrack.API.DTOs;
 using FeedbackTrack.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +21,27 @@ namespace FeedbackTrack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendRecognition(TRecognition recognition)
+        public async Task<IActionResult> SendRecognition(RecognitionCreateDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            recognition.FromUserId = userId;
-            recognition.Date = DateTime.UtcNow;
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            var userId = int.Parse(userIdStr);
+
+            var recognition = new TRecognition
+            {
+                FromUserId = userId,
+                ToUserId = dto.ToUserId,
+                BadgeType = dto.BadgeType,
+                Points = dto.Points,
+                Comments = dto.Comments,
+                Date = DateTime.UtcNow
+            };
 
             _context.TRecognitions.Add(recognition);
             await _context.SaveChangesAsync();
-            return Ok(recognition);
+            
+            return Ok(new { message = "Recognition sent successfully" });
         }
 
         [HttpGet("user/{userId}")]

@@ -1,74 +1,94 @@
-<div class="container">
-    <div class="flex-between" style="margin-bottom: 20px;">
-        <h2>Manager Dashboard - Team Oversight</h2>
+<div class="container fade-in">
+    <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-            <a routerLink="/reports" class="btn btn-primary">Generate Reports</a>
+            <h2 class="dashboard-title" style="margin-bottom: 0.5rem;">Leadership Hub</h2>
+            <p style="color: var(--text-secondary);">Monitor, mentor, and motivate your team through data-driven
+                insights.</p>
+        </div>
+        <div class="card action-card" routerLink="/reports"
+            style="margin-bottom: 0; min-width: 250px; flex-direction: row; align-items: center; padding: 16px;">
+            <div class="icon-wrapper" style="width: 40px; height: 40px; font-size: 1.2rem;">📊</div>
+            <div style="flex: 1;">
+                <h4 style="margin: 0; font-size: 0.95rem;">Generate Reports</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Export team performance data.</p>
+            </div>
         </div>
     </div>
 
     <div class="dashboard-grid">
         <!-- Team Feedback Review -->
-        <div class="card">
-            <h3>Team Feedback Review</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Monitor the feedback received
-                by your team members.</p>
+        <div class="card" style="grid-column: span 2;">
+            <h3 style="margin-bottom: 8px;">Review Feedback</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 24px;">Analyze the qualitative
+                feedback received by your team members.</p>
 
-            <div class="flex-center" style="justify-content: flex-start; gap: 10px; margin-bottom: 20px;">
-                <select [(ngModel)]="targetUserId"
-                    style="padding: 8px; flex: 1; border-radius: 4px; border: 1px solid #ddd;">
-                    <option [ngValue]="null" disabled>Select Team Member...</option>
-                    <option *ngFor="let user of users" [value]="user.id">{{ user.name }} ({{
-                        user.department?.departmentName }})</option>
+            <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+                <select [(ngModel)]="targetUserId" class="form-control"
+                    style="flex: 1; border-radius: 12px; border: 1px solid var(--background-alt); background: var(--background-main);">
+                    <option [ngValue]="null" disabled>Select team member to review...</option>
+                    <option *ngFor="let user of users" [value]="user.id">
+                        {{ user.name }} — {{ user.department?.departmentName || 'Unknown' }}
+                    </option>
                 </select>
                 <button (click)="loadTeamFeedback()" class="btn btn-primary" [disabled]="isLoading || !targetUserId">
-                    {{ isLoading ? 'Loading...' : 'Review Feedback' }}
+                    {{ isLoading ? 'Analyzing...' : 'View Insights' }}
                 </button>
             </div>
 
-            <div *ngIf="teamFeedback.length > 0">
-                <div *ngFor="let msg of teamFeedback" style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                    <div style="font-weight: bold; color: var(--primary-color);">{{ msg.category }}</div>
-                    <p style="margin: 5px 0;">"{{ msg.comments }}"</p>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">
-                        From: {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUser?.name || 'Unknown') }} • {{ msg.date |
-                        date }}
+            <div *ngIf="teamFeedback.length > 0" class="fade-in">
+                <div *ngFor="let msg of teamFeedback" class="list-item"
+                    style="padding: 20px; background: var(--background-main); border-radius: 12px; margin-bottom: 12px; border: none;">
+                    <p style="font-size: 1rem; color: var(--text-primary); line-height: 1.6; font-style: italic;">"{{
+                        msg.description }}"</p>
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 12px;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
+                            Target: {{ msg.toUser?.name || 'Member' }}
+                        </span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">
+                            {{ msg.isAnonymous ? 'Anonymous' : msg.fromUser?.name }} • {{ msg.date | date:'mediumDate'
+                            }}
+                        </span>
                     </div>
                 </div>
             </div>
 
             <div *ngIf="teamFeedback.length === 0 && !isLoading && targetUserId"
-                style="color: var(--text-muted); padding: 20px; text-align: center;">
-                No feedback items found for the selected team member.
+                style="text-align: center; padding: 40px;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
+                <p style="color: var(--text-muted);">No feedback records found for this member.</p>
             </div>
         </div>
 
-        <!-- Team Engagement (Leaderboard) -->
+        <!-- Team Engagement -->
         <div class="card">
-            <h3>Team Engagement Leaderboard</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Top performers based on
-                appreciation points.</p>
+            <h3 style="margin-bottom: 8px;">Team Engagement</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px;">Recognition leaderboard
+                based on appreciation points.</p>
 
-            <div *ngIf="leaderboard.length === 0" style="color: var(--text-muted); text-align: center; padding: 20px;">
-                Insufficient engagement data.
+            <div *ngIf="leaderboard.length === 0"
+                style="text-align: center; padding: 30px 0; color: var(--text-muted);">
+                Calculating engagement metrics...
             </div>
 
-            <table *ngIf="leaderboard.length > 0" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="text-align: left; border-bottom: 2px solid #eee;">
-                        <th style="padding: 8px;">Rank</th>
-                        <th style="padding: 8px;">Employee</th>
-                        <th style="padding: 8px;">Points</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let entry of leaderboard; let i = index" style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 8px; font-weight: bold;">#{{ i + 1 }}</td>
-                        <td style="padding: 8px;">{{ entry.user?.name || 'Employee' }}</td>
-                        <td style="padding: 8px; font-weight: bold; color: var(--success-color);">{{ entry.totalPoints
-                            }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div *ngFor="let entry of leaderboard; let i = index"
+                style="display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 12px; background: var(--background-main); margin-bottom: 10px; transition: transform 0.2s;">
+                <div
+                    style="width: 32px; height: 32px; background: var(--primary-gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
+                    {{ i + 1 }}
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ entry.user?.name || 'Team Member' }}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">{{ entry.user?.department?.departmentName
+                        }}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 800; color: var(--success-color);">{{ entry.totalPoints }}</div>
+                    <div
+                        style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
+                        Points</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

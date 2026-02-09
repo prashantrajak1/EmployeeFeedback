@@ -4,6 +4,7 @@ using FeedbackTrack.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FeedbackTrack.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209152619_InitialSqlServerMigration")]
+    partial class InitialSqlServerMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,7 +255,7 @@ namespace FeedbackTrack.API.Migrations
                     b.ToTable("TUsers");
                 });
 
-            modelBuilder.Entity("FeedbackTrack.API.Models.sp_UserFeedbackStats", b =>
+            modelBuilder.Entity("FeedbackTrack.API.Models.UserFeedbackStats", b =>
                 {
                     b.Property<int>("FeedbackGiven")
                         .HasColumnType("int");
@@ -266,7 +269,7 @@ namespace FeedbackTrack.API.Migrations
                     b.ToTable("UserFeedbackStats");
                 });
 
-            modelBuilder.Entity("FeedbackTrack.API.Models.vw_UserProfileView", b =>
+            modelBuilder.Entity("FeedbackTrack.API.Models.UserProfileView", b =>
                 {
                     b.Property<string>("DepartmentName")
                         .IsRequired()
@@ -289,7 +292,7 @@ namespace FeedbackTrack.API.Migrations
 
                     b.ToTable((string)null);
 
-                    b.ToView("vw_UserProfileView", (string)null);
+                    b.ToView("UserProfileView", (string)null);
                 });
 
             modelBuilder.Entity("FeedbackTrack.API.Models.TFeedback", b =>

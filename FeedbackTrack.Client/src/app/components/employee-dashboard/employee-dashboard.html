@@ -1,39 +1,95 @@
-<div class="container">
-    <div class="flex-between" style="margin-bottom: 20px;">
-        <h2>My Feedback Space</h2>
-        <div>
-            <a routerLink="/give-feedback" class="btn btn-primary" style="margin-right: 10px;">Submit Feedback</a>
-            <a routerLink="/give-recognition" class="btn btn-success">Give Recognition</a>
+<div class="container fade-in">
+    <div style="margin-bottom: 40px;">
+        <h2 class="dashboard-title">Employee Hub</h2>
+        <p style="color: var(--text-secondary); margin-top: -1.5rem;">Grow through feedback and appreciate your peers.
+        </p>
+    </div>
+
+    <!-- Quick Actions Grid -->
+    <div class="dashboard-grid" style="margin-bottom: 40px;">
+        <div class="card action-card" routerLink="/give-feedback">
+            <div class="icon-wrapper">📝</div>
+            <div>
+                <h3 style="margin-bottom: 4px;">Submit Feedback</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Share constructive insights with your
+                    colleagues.</p>
+            </div>
+        </div>
+
+        <div class="card action-card" routerLink="/give-recognition">
+            <div class="icon-wrapper">🌟</div>
+            <div>
+                <h3 style="margin-bottom: 4px;">Give Recognition</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Celebrate a teammate's hard work and
+                    dedication.</p>
+            </div>
+        </div>
+
+        <div class="card action-card">
+            <div class="icon-wrapper">🏆</div>
+            <div>
+                <h3 style="margin-bottom: 4px;">My Achievements</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">View recognition and feedback you've
+                    received.</p>
+            </div>
         </div>
     </div>
 
     <div class="dashboard-grid">
         <!-- Recognitions Section -->
         <div class="card">
-            <h3>My Badges & Kudos</h3>
-            <div *ngIf="recognitions.length === 0" style="color: var(--text-muted);">
-                No recognitions yet. Keep up the good work!
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span>Received Kudos</span>
+                <span class="badge"
+                    style="font-size: 0.7rem; background: var(--success-color); color: white; padding: 2px 8px; border-radius: 12px;">{{
+                    recognitions.length }}</span>
+            </h3>
+
+            <div *ngIf="recognitions.length === 0" style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">☁️</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No recognitions yet. Keep doing great work!</p>
             </div>
-            <div *ngFor="let rec of recognitions" style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <div style="font-weight: bold; color: var(--primary-color);">{{ rec.badge }} (+{{ rec.points }} pts)
+
+            <div *ngFor="let rec of recognitions" class="list-item">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--primary-color);">{{ rec.badgeType }}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">From: {{ rec.fromUser?.name || 'A
+                            Peer' }}</div>
+                        <p style="margin-top: 8px; font-size: 0.9rem; font-style: italic; color: var(--text-primary);">
+                            "{{ rec.comments }}"</p>
+                    </div>
+                    <div class="stat-label"
+                        style="background: var(--background-alt); padding: 4px 8px; border-radius: 4px;">
+                        +{{ rec.points }} pts
+                    </div>
                 </div>
-                <div style="font-size: 0.9rem;">From: {{ rec.fromUser?.name || 'Unknown' }}</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ rec.date | date }}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">{{ rec.date |
+                    date:'mediumDate' }}</div>
             </div>
         </div>
 
         <!-- Feedback Section -->
         <div class="card">
-            <h3>My Feedback</h3>
-            <div *ngIf="feedbacks.length === 0" style="color: var(--text-muted);">
-                No feedback received yet.
+            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span>Recent Feedback</span>
+                <span class="badge"
+                    style="font-size: 0.7rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px;">{{
+                    feedbacks.length }}</span>
+            </h3>
+
+            <div *ngIf="feedbacks.length === 0" style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📩</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">No feedback received yet.</p>
             </div>
-            <div *ngFor="let msg of feedbacks" style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <div style="font-weight: bold;">{{ msg.category }}</div>
-                <p>"{{ msg.comments }}"</p>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
-                    From: {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUser?.name || 'Unknown') }} • {{ msg.date | date
-                    }}
+
+            <div *ngFor="let msg of feedbacks" class="list-item">
+                <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5;">"{{ msg.description }}"</p>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">
+                        By {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUser?.name || 'Colleague') }}
+                    </span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ msg.date | date:'shortDate' }}</span>
                 </div>
             </div>
         </div>
