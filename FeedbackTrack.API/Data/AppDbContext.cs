@@ -17,7 +17,6 @@ namespace FeedbackTrack.API.Data
 
         // Views and SP results
         public DbSet<vw_UserProfileView> UserProfiles { get; set; }
-        public DbSet<sp_UserFeedbackStats> UserFeedbackStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,11 +65,6 @@ namespace FeedbackTrack.API.Data
             {
                 eb.HasNoKey();
                 eb.ToView("vw_UserProfileView");
-            });
-
-            modelBuilder.Entity<sp_UserFeedbackStats>(eb =>
-            {
-                eb.HasNoKey();
             });
         }
     }
