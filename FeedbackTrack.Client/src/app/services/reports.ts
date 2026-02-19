@@ -13,4 +13,12 @@ export class ReportsService {
     getStats(): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/stats`);
     }
+
+    exportCsv(): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/export-csv`, { responseType: 'blob' });
+    }
+
+    getTrends(): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/trends`);
+    }
 }

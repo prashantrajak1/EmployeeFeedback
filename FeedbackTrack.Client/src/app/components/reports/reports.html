@@ -1,29 +1,72 @@
 <div class="container">
-    <h2>Management Reports & Stats</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2>Management Reports & Stats</h2>
+        <button (click)="downloadReport()" class="btn btn-primary">Download Report (CSV)</button>
+    </div>
 
     <div *ngIf="isLoading" style="text-align: center; margin-top: 40px;">
         Loading reports...
     </div>
 
-    <div *ngIf="!isLoading && stats" class="dashboard-grid" style="margin-top: 20px;">
-        <div class="card" style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color);">{{ stats.totalFeedback }}
+    <div *ngIf="!isLoading && stats" style="margin-top: 20px;">
+        <div class="dashboard-grid">
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary-color);">{{ stats.totalFeedback
+                    }}
+                </div>
+                <div style="color: var(--text-secondary); font-weight: 600;">Feedbacks Shared</div>
             </div>
-            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
-                Total Feedback Items</div>
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: bold; color: var(--success-color);">{{
+                    stats.totalRecognitions
+                    }}</div>
+                <div style="color: var(--text-secondary); font-weight: 600;">Kudos Awarded</div>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: bold; color: var(--danger-color);">{{ stats.activeUsers }}
+                </div>
+                <div style="color: var(--text-secondary); font-weight: 600;">Active Users</div>
+            </div>
         </div>
 
-        <div class="card" style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: var(--success-color);">{{ stats.totalRecognitions
-                }}</div>
-            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
-                Total Kudos Awarded</div>
-        </div>
+        <!-- Engagement Trends -->
+        <div class="card" style="margin-top: 40px;">
+            <h3 style="margin-bottom: 24px;">Engagement Trends (Last 30 Days)</h3>
+            <div class="dashboard-grid">
+                <!-- Feedback Chart -->
+                <div>
+                    <h4 style="margin-bottom: 16px; color: var(--primary-color);">Daily Feedback Volume</h4>
+                    <div *ngIf="trends?.feedbacks"
+                        style="display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--background-alt); padding-bottom: 8px;">
+                        <div *ngFor="let d of trends.feedbacks"
+                            [style.height.%]="(d.count / getMax(trends.feedbacks)) * 100"
+                            [title]="d.date | date:'shortDate'"
+                            style="flex: 1; background: var(--primary-gradient); border-radius: 4px 4px 0 0; min-width: 8px;">
+                        </div>
+                    </div>
+                    <div *ngIf="!trends?.feedbacks?.length"
+                        style="text-align: center; padding: 20px; color: var(--text-muted);">
+                        No data recorded yet.
+                    </div>
+                </div>
 
-        <div class="card" style="text-align: center;">
-            <div style="font-size: 2.5rem; font-weight: bold; color: #666;">{{ stats.activeUsers }}</div>
-            <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; font-weight: bold;">
-                Active Users</div>
+                <!-- Recognition Chart -->
+                <div>
+                    <h4 style="margin-bottom: 16px; color: var(--success-color);">Daily Kudos Volume</h4>
+                    <div *ngIf="trends?.recognitions"
+                        style="display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--background-alt); padding-bottom: 8px;">
+                        <div *ngFor="let d of trends.recognitions"
+                            [style.height.%]="(d.count / getMax(trends.recognitions)) * 100"
+                            [title]="d.date | date:'shortDate'"
+                            style="flex: 1; background: var(--success-color); border-radius: 4px 4px 0 0; min-width: 8px;">
+                        </div>
+                    </div>
+                    <div *ngIf="!trends?.recognitions?.length"
+                        style="text-align: center; padding: 20px; color: var(--text-muted);">
+                        No data recorded yet.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

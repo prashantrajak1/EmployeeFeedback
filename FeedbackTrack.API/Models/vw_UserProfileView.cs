@@ -7,5 +7,7 @@ namespace FeedbackTrack.API.Models
         public string Email { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
         public string DepartmentName { get; set; } = string.Empty;
+        public DateTime CreatedDate { get; set; }
+        public bool IsActive { get; set; }
     }
 }

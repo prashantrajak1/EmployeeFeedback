@@ -11,6 +11,7 @@ import { ReportsService } from '../../services/reports';
 })
 export class Reports implements OnInit {
   stats: any = null;
+  trends: any = null;
   isLoading = true;
 
   constructor(private reportsService: ReportsService) { }
@@ -19,12 +20,40 @@ export class Reports implements OnInit {
     this.reportsService.getStats().subscribe({
       next: (res) => {
         this.stats = res;
+        this.loadTrends();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadTrends() {
+    this.reportsService.getTrends().subscribe({
+      next: (res) => {
+        this.trends = res;
         this.isLoading = false;
       },
       error: (err) => {
         console.error(err);
         this.isLoading = false;
       }
+    });
+  }
+
+  getMax(data: any[]): number {
+    return Math.max(...data.map(d => d.count), 1);
+  }
+
+  downloadReport() {
+    this.reportsService.exportCsv().subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FeedbackTrack_Report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
     });
   }
 }

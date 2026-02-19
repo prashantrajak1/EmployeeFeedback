@@ -17,6 +17,10 @@ namespace FeedbackTrack.API.Data
 
         // Views and SP results
         public DbSet<vw_UserProfileView> UserProfiles { get; set; }
+        public DbSet<vw_FeedbackView> FeedbackViews { get; set; }
+        public DbSet<vw_RecognitionView> RecognitionViews { get; set; }
+        public DbSet<vw_ReviewView> ReviewViews { get; set; }
+        public DbSet<usp_GenerateReport_Result> ReportStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,6 +69,29 @@ namespace FeedbackTrack.API.Data
             {
                 eb.HasNoKey();
                 eb.ToView("vw_UserProfileView");
+            });
+
+            modelBuilder.Entity<vw_FeedbackView>(eb =>
+            {
+                eb.HasNoKey();
+                eb.ToView("vw_FeedbackView");
+            });
+
+            modelBuilder.Entity<vw_RecognitionView>(eb =>
+            {
+                eb.HasNoKey();
+                eb.ToView("vw_RecognitionView");
+            });
+
+            modelBuilder.Entity<vw_ReviewView>(eb =>
+            {
+                eb.HasNoKey();
+                eb.ToView("vw_ReviewView");
+            });
+
+            modelBuilder.Entity<usp_GenerateReport_Result>(eb =>
+            {
+                eb.HasNoKey();
             });
         }
     }

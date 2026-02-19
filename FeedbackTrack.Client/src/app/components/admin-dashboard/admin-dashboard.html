@@ -70,7 +70,8 @@
                         <tr>
                             <th>User Details</th>
                             <th>Current Role</th>
-                            <th style="text-align: right;">System Status</th>
+                            <th>Created_Date</th>
+                            <th style="text-align: right;">Active Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,18 +83,68 @@
                             <td>
                                 <span
                                     style="font-size: 0.7rem; font-weight: 800; background: white; border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 6px; color: var(--text-secondary);">
-                                    {{ u.role?.roleName || 'Member' }}
+                                    {{ u.roleName }}
                                 </span>
                             </td>
+                            <td style="font-size: 0.8rem; color: var(--text-secondary);">
+                                {{ formatDate(u.createdDate) }}
+                            </td>
                             <td style="text-align: right;">
-                                <button (click)="toggleUserStatus(u)" class="btn btn-secondary"
-                                    style="padding: 4px 12px; font-size: 0.75rem; border-color: var(--background-alt);">
-                                    Config
+                                <button (click)="toggleUserStatus(u)"
+                                    [class]="u.isActive ? 'btn btn-secondary' : 'btn btn-primary'"
+                                    style="padding: 4px 12px; font-size: 0.75rem; min-width: 90px;">
+                                    {{ u.isActive ? 'Deactivate' : 'Activate' }}
                                 </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Activity Overview -->
+    <div style="margin-top: 40px;">
+        <h3 style="margin-bottom: 24px;">Platform Activity Overview</h3>
+
+        <div class="dashboard-grid">
+            <!-- Feedbacks Overview -->
+            <div class="card">
+                <h4 style="margin-bottom: 16px; color: var(--danger-color);">Latest Feedback</h4>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <div *ngFor="let f of allFeedbacks"
+                        style="padding: 12px; border-bottom: 1px solid var(--background-alt);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 600; font-size: 0.85rem;">{{ f.fromUserName }} → {{ f.toUserName
+                                }}</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">{{ formatDate(f.date) }}</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">{{ f.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recognitions Overview -->
+            <div class="card">
+                <h4 style="margin-bottom: 16px; color: var(--success-color);">Latest Kudos</h4>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <div *ngFor="let r of allRecognitions"
+                        style="padding: 12px; border-bottom: 1px solid var(--background-alt);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 600; font-size: 0.85rem;">{{ r.fromUserName }} awarded {{
+                                r.toUserName }}</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">{{ formatDate(r.date) }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="badge"
+                                style="background: var(--success-color); color: white; font-size: 0.65rem; padding: 2px 6px;">{{
+                                r.badgeType }}</span>
+                            <span style="font-size: 0.8rem; font-weight: 700;">+{{ r.points }} pts</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -17,9 +17,9 @@ namespace FeedbackTrack.API.Data
 
             var users = new List<TUser>
             {
-                new TUser { Name = "System Admin", Email = "admin@feedback.com", Password = "admin123", RoleId = adminRole.Id, DepartmentId = itDept.Id },
-                new TUser { Name = "John Manager", Email = "manager@feedback.com", Password = "manager123", RoleId = managerRole.Id, DepartmentId = itDept.Id },
-                new TUser { Name = "Jane Employee", Email = "employee@feedback.com", Password = "employee123", RoleId = employeeRole.Id, DepartmentId = itDept.Id }
+                new TUser { Name = "System Admin", Email = "admin@feedback.com", Password = "admin123", RoleId = adminRole.Id, DepartmentId = itDept.Id, CreatedDate = DateTime.Now.AddDays(-30) },
+                new TUser { Name = "John Manager", Email = "manager@feedback.com", Password = "manager123", RoleId = managerRole.Id, DepartmentId = itDept.Id, CreatedDate = DateTime.Now.AddDays(-25) },
+                new TUser { Name = "Jane Employee", Email = "employee@feedback.com", Password = "employee123", RoleId = employeeRole.Id, DepartmentId = itDept.Id, CreatedDate = DateTime.Now.AddDays(-20) }
             };
 
             context.TUsers.AddRange(users);

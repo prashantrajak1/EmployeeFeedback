@@ -28,18 +28,15 @@ namespace FeedbackTrack.API.Controllers
 
             var userId = int.Parse(userIdStr);
 
-            var recognition = new TRecognition
-            {
-                FromUserId = userId,
-                ToUserId = dto.ToUserId,
-                BadgeType = dto.BadgeType,
-                Points = dto.Points,
-                Comments = dto.Comments,
-                Date = DateTime.UtcNow
-            };
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC usp_AddRecognition @p0, @p1, @p2, @p3, @p4, @p5",
+                userId, dto.ToUserId, dto.BadgeType, dto.Points, dto.Comments, DateTime.UtcNow);
 
-            _context.TRecognitions.Add(recognition);
-            await _context.SaveChangesAsync();
+            // Trigger notification for the recipient
+            var fromUser = await _context.TUsers.FindAsync(userId);
+            var notificationMsg = $"You received a new Recognition from {fromUser?.Name}! ({dto.BadgeType})";
+            await _context.Database.ExecuteSqlRawAsync("EXEC usp_Notification_Create @p0, @p1, @p2",
+                notificationMsg, dto.ToUserId, DateTime.UtcNow);
             
             return Ok(new { message = "Recognition sent successfully" });
         }
@@ -47,10 +44,8 @@ namespace FeedbackTrack.API.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserRecognitions(int userId)
         {
-            var recognitions = await _context.TRecognitions
-                .Include(r => r.FromUser)
-                .Where(r => r.ToUserId == userId)
-                .OrderByDescending(r => r.Date)
+            var recognitions = await _context.RecognitionViews
+                .FromSqlRaw("EXEC usp_GetRecognition @p0", userId)
                 .ToListAsync();
             return Ok(recognitions);
         }
@@ -58,13 +53,13 @@ namespace FeedbackTrack.API.Controllers
         [HttpGet("leaderboard")]
         public async Task<IActionResult> GetLeaderboard()
         {
-            var leaderboard = await _context.TRecognitions
+            var leaderboard = await _context.RecognitionViews
                 .GroupBy(r => r.ToUserId)
                 .Select(g => new
                 {
                     UserId = g.Key,
                     TotalPoints = g.Sum(r => r.Points),
-                    User = g.First().ToUser
+                    UserName = g.First().ToUserName
                 })
                 .OrderByDescending(x => x.TotalPoints)
                 .Take(10)

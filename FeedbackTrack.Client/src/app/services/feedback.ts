@@ -21,4 +21,12 @@ export class FeedbackService {
   getTeamFeedback(userId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/team/${userId}`);
   }
+
+  getReviewsForUser(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/reviews/user/${userId}`);
+  }
+
+  submitReview(review: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/review`, review);
+  }
 }

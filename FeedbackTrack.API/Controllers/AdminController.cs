@@ -37,5 +37,23 @@ namespace FeedbackTrack.API.Controllers
             var categories = new[] { "Collaboration", "Excellence", "Innovation", "Growth", "Ownership" };
             return Ok(categories);
         }
+
+        [HttpGet("all-feedbacks")]
+        public async Task<IActionResult> GetAllFeedbacks()
+        {
+            var feedbacks = await _context.FeedbackViews
+                .OrderByDescending(f => f.Date)
+                .ToListAsync();
+            return Ok(feedbacks);
+        }
+
+        [HttpGet("all-recognitions")]
+        public async Task<IActionResult> GetAllRecognitions()
+        {
+            var recognitions = await _context.RecognitionViews
+                .OrderByDescending(r => r.Date)
+                .ToListAsync();
+            return Ok(recognitions);
+        }
     }
 }

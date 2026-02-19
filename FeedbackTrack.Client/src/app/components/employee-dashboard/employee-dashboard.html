@@ -54,7 +54,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
                         <div style="font-weight: 700; color: var(--primary-color);">{{ rec.badgeType }}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">From: {{ rec.fromUser?.name || 'A
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">From: {{ rec.fromUserName || 'A
                             Peer' }}</div>
                         <p style="margin-top: 8px; font-size: 0.9rem; font-style: italic; color: var(--text-primary);">
                             "{{ rec.comments }}"</p>
@@ -87,7 +87,7 @@
                 <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5;">"{{ msg.description }}"</p>
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
                     <span style="font-size: 0.8rem; color: var(--text-muted);">
-                        By {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUser?.name || 'Colleague') }}
+                        By {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUserName || 'Colleague') }}
                     </span>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">{{ msg.date | date:'shortDate' }}</span>
                 </div>

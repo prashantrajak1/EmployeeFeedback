@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth';
+import { NotificationService } from './services/notification';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +11,52 @@ import { AuthService } from './services/auth';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  constructor(public authService: AuthService, private router: Router) { }
+export class App implements OnInit {
+  notifications: any[] = [];
+  showNotifications = false;
+
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.loadNotifications();
+    }
+  }
+
+  loadNotifications() {
+    this.notificationService.getNotifications().subscribe(res => {
+      this.notifications = res;
+    });
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    if (this.showNotifications) {
+      this.loadNotifications();
+    }
+  }
+
+  markAsRead(notification: any) {
+    this.notificationService.markAsRead(notification.id).subscribe(() => {
+      notification.isRead = true;
+    });
+  }
+
+  get unreadCount(): number {
+    return this.notifications.filter(n => !n.isRead).length;
+  }
 
   getUserRole(): string {
-    const token = this.authService.getToken();
-    if (!token) return '';
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload['role'] || payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || '';
-    } catch (e) {
-      return '';
-    }
+    const user = this.authService.getUser();
+    return user?.role || '';
+  }
+
+  get currentUser(): any {
+    return this.authService.getUser();
   }
 
   logout() {

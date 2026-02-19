@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private apiUrl = 'http://localhost:5002/api/auth'; // Update with your actual API URL
   private tokenKey = 'authToken';
-  private userIdKey = 'userId';
+  private userKey = 'userInfo';
 
   constructor(private http: HttpClient) { }
 
@@ -18,25 +18,22 @@ export class AuthService {
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<{ token: string, user: any }>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         localStorage.setItem(this.tokenKey, response.token);
-        // Decode token to get userId or role if needed, or get it from response
-      })
-    );
-  }
-
-  adminLogin(): Observable<any> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/admin-login`, {}).pipe(
-      tap(response => {
-        localStorage.setItem(this.tokenKey, response.token);
+        localStorage.setItem(this.userKey, JSON.stringify(response.user));
       })
     );
   }
 
   logout() {
     localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userIdKey);
+    localStorage.removeItem(this.userKey);
+  }
+
+  getUser(): any {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null;
   }
 
   getToken(): string | null {

@@ -13,6 +13,55 @@
             routerLinkActive="active"
             style="text-decoration: none; color: var(--text-secondary); font-weight: 600;">Reports</a>
         </li>
+
+        <!-- Notifications Bell -->
+        <li *ngIf="authService.isLoggedIn()" style="position: relative; margin-left: 8px;">
+          <button (click)="toggleNotifications()"
+            style="background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; position: relative;">
+            🔔
+            <span *ngIf="unreadCount > 0"
+              style="position: absolute; top: 0; right: 0; background: var(--danger-color); color: white; font-size: 0.6rem; min-width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white;">
+              {{ unreadCount }}
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown -->
+          <div *ngIf="showNotifications"
+            style="position: absolute; top: 45px; right: 0; width: 300px; background: white; border-radius: 12px; box-shadow: var(--shadow-lg); z-index: 1000; padding: 16px; border: 1px solid var(--background-alt);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--background-alt); padding-bottom: 8px;">
+              <h4 style="margin: 0; font-size: 0.9rem;">Notifications</h4>
+            </div>
+            <div style="max-height: 250px; overflow-y: auto;">
+              <div *ngIf="notifications.length === 0"
+                style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">
+                No notifications yet.
+              </div>
+              <div *ngFor="let n of notifications" (click)="markAsRead(n)"
+                [style.background]="n.isRead ? 'transparent' : 'var(--background-alt)'"
+                style="padding: 10px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s;">
+                <p style="margin: 0; font-size: 0.8rem; color: var(--text-primary); line-height: 1.4;"
+                  [style.font-weight]="n.isRead ? 'normal' : '600'">
+                  {{ n.message }}
+                </p>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">{{ n.date | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li *ngIf="currentUser"
+          style="display: flex; align-items: center; gap: 8px; margin-left: 12px; padding: 4px 12px; background: var(--background-alt); border-radius: 20px;">
+          <div
+            style="width: 32px; height: 32px; background: var(--primary-gradient); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">
+            {{ currentUser.name.charAt(0) }}
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); line-height: 1;">{{
+              currentUser.name }}</span>
+            <span style="font-size: 0.65rem; color: var(--text-muted);">{{ currentUser.email }}</span>
+          </div>
+        </li>
         <li><button (click)="logout()" class="btn btn-secondary"
             style="padding: 6px 14px; font-size: 0.85rem;">Logout</button></li>
       </ul>

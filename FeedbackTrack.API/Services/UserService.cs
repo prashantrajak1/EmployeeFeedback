@@ -67,7 +67,7 @@ namespace FeedbackTrack.API.Services
             return user;
         }
 
-        public async Task<string> LoginAsync(LoginDto dto)
+        public async Task<LoginResponseDto?> LoginAsync(LoginDto dto)
         {
             var user = await _context.TUsers
                 .Include(u => u.Role)
@@ -94,7 +94,18 @@ namespace FeedbackTrack.API.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            
+            return new LoginResponseDto
+            {
+                Token = tokenHandler.WriteToken(token),
+                User = new UserProfileDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role?.RoleName ?? "Employee"
+                }
+            };
         }
 
         public async Task<TUser?> GetUserByIdAsync(int id)

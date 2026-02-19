@@ -39,6 +39,15 @@ namespace FeedbackTrack.API.Controllers
 
             _context.TFeedbacks.Add(feedback);
             await _context.SaveChangesAsync();
+
+            // Trigger notification for the recipient
+            var fromUser = await _context.TUsers.FindAsync(userId);
+            var notificationMsg = feedback.IsAnonymous 
+                ? "You received new anonymous feedback." 
+                : $"You received new feedback from {fromUser?.Name}.";
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC usp_Notification_Create @p0, @p1, @p2", 
+                notificationMsg, feedback.ToUserId, DateTime.UtcNow);
             
             return Ok(new { message = "Feedback submitted successfully" });
         }
@@ -47,8 +56,7 @@ namespace FeedbackTrack.API.Controllers
         public async Task<IActionResult> GetMyReceivedFeedback()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var feedbacks = await _context.TFeedbacks
-                .Include(f => f.FromUser)
+            var feedbacks = await _context.FeedbackViews
                 .Where(f => f.ToUserId == userId)
                 .OrderByDescending(f => f.Date)
                 .ToListAsync();
@@ -58,8 +66,8 @@ namespace FeedbackTrack.API.Controllers
             {
                 if (f.IsAnonymous)
                 {
-                    f.FromUser = null;
-                    f.FromUserId = null;
+                    f.FromUserName = "Anonymous";
+                    f.FromUserId = 0;
                 }
             }
 
@@ -71,9 +79,7 @@ namespace FeedbackTrack.API.Controllers
         [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> GetTeamMemberFeedback(int userId)
         {
-            // In a real app, verify that 'userId' actually reports to the current manager
-            var feedbacks = await _context.TFeedbacks
-                .Include(f => f.FromUser)
+            var feedbacks = await _context.FeedbackViews
                 .Where(f => f.ToUserId == userId)
                 .OrderByDescending(f => f.Date)
                 .ToListAsync();
@@ -82,12 +88,35 @@ namespace FeedbackTrack.API.Controllers
             {
                 if (f.IsAnonymous)
                 {
-                    f.FromUser = null;
-                    f.FromUserId = null;
+                    f.FromUserName = "Anonymous";
+                    f.FromUserId = 0;
                 }
             }
 
             return Ok(feedbacks);
+        }
+
+        [HttpGet("reviews/user/{userId}")]
+        [Authorize(Roles = "Manager,Admin")]
+        public async Task<IActionResult> GetReviewsByUser(int userId)
+        {
+            var reviews = await _context.TReviews
+                .FromSqlRaw("EXEC usp_Review_GetByUserId @p0", userId)
+                .ToListAsync();
+            return Ok(reviews);
+        }
+
+        [HttpPost("review")]
+        [Authorize(Roles = "Manager,Admin")]
+        public async Task<IActionResult> SubmitReview(ReviewCreateDto dto)
+        {
+            var reviewerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            await _context.Database.ExecuteSqlRawAsync(
+                "EXEC usp_Review_Insert @p0, @p1, @p2, @p3",
+                dto.FeedbackId, reviewerId, dto.Comments, DateTime.UtcNow);
+
+            return Ok(new { message = "Review added successfully" });
         }
     }
 }

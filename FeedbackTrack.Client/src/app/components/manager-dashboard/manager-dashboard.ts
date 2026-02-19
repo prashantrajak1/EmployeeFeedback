@@ -19,6 +19,7 @@ export class ManagerDashboard implements OnInit {
   leaderboard: any[] = [];
   targetUserId: number | null = null;
   isLoading = false;
+  reviewCommentMap: { [feedbackId: number]: string } = {};
 
   constructor(
     private feedbackService: FeedbackService,
@@ -32,7 +33,13 @@ export class ManagerDashboard implements OnInit {
   }
 
   loadUsers() {
-    this.userService.getAllUsers().subscribe(res => this.users = res);
+    this.userService.getAllUsers().subscribe(res => {
+      // Standardize the user object to have departmentName for the template
+      this.users = res.map(u => ({
+        ...u,
+        departmentName: u.department?.departmentName || u.departmentName
+      }));
+    });
   }
 
   loadLeaderboard() {
@@ -44,14 +51,37 @@ export class ManagerDashboard implements OnInit {
 
     this.isLoading = true;
     this.feedbackService.getTeamFeedback(+this.targetUserId).subscribe({
-      next: (res) => {
-        this.teamFeedback = res;
-        this.isLoading = false;
+      next: (feedbacks) => {
+        this.feedbackService.getReviewsForUser(+this.targetUserId!).subscribe({
+          next: (reviews) => {
+            this.teamFeedback = feedbacks.map(f => ({
+              ...f,
+              reviews: reviews.filter((r: any) => r.feedbackId === f.id)
+            }));
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error(err);
+            this.teamFeedback = feedbacks.map(f => ({ ...f, reviews: [] }));
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         console.error(err);
         this.isLoading = false;
+        this.teamFeedback = [];
       }
+    });
+  }
+
+  submitReview(feedbackId: number) {
+    const comments = this.reviewCommentMap[feedbackId];
+    if (!comments || !comments.trim()) return;
+
+    this.feedbackService.submitReview({ feedbackId, comments }).subscribe(() => {
+      this.reviewCommentMap[feedbackId] = '';
+      this.loadTeamFeedback(); // Refresh to show new review
     });
   }
 }

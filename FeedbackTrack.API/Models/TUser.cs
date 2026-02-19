@@ -21,5 +21,7 @@ namespace FeedbackTrack.API.Models
         public int DepartmentId { get; set; }
         [ForeignKey("DepartmentId")]
         public TDepartment? Department { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 }

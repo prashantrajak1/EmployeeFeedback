@@ -28,15 +28,8 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;"
-                [disabled]="isLoading">
+            <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="isLoading">
                 {{ isLoading ? 'Logging in...' : 'Login' }}
-            </button>
-
-            <button type="button" class="btn btn-success"
-                style="width: 100%; background-color: #28a745; border-color: #28a745;" (click)="onAdminAutoLogin()"
-                [disabled]="isLoading">
-                Login as Admin (Auto)
             </button>
         </form>
 
