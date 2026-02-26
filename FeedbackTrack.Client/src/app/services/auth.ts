@@ -3,11 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5002/api/auth'; // Update with your actual API URL
+  private apiUrl = `${environment.apiUrl}/auth`; // Update with your actual API URL
   private tokenKey = 'authToken';
   private userKey = 'userInfo';
 
