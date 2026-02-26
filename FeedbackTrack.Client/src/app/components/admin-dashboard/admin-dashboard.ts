@@ -18,6 +18,8 @@ export class AdminDashboard implements OnInit {
   users: any[] = [];
   allFeedbacks: any[] = [];
   allRecognitions: any[] = [];
+  memberReport: any[] = [];
+  activeSessions: Set<number> = new Set();
   stats: any = null;
   isLoading = true;
   categories: string[] = ['Collaboration', 'Excellence', 'Innovation', 'Growth', 'Ownership'];
@@ -33,18 +35,40 @@ export class AdminDashboard implements OnInit {
     this.loadData();
     this.loadUsers();
     this.loadGlobalActivity();
+    this.loadMemberReport();
   }
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(res => {
       // Sort users by name
       this.users = res.sort((a, b) => a.name.localeCompare(b.name));
+
+      this.userService.getActiveSessions().subscribe(sessions => {
+        this.activeSessions = new Set(sessions);
+      });
     });
   }
 
   loadGlobalActivity() {
     this.adminService.getAllFeedbacks().subscribe(res => this.allFeedbacks = res);
     this.adminService.getAllRecognitions().subscribe(res => this.allRecognitions = res);
+  }
+
+  loadMemberReport() {
+    this.reportsService.getMemberReport().subscribe(res => {
+      this.memberReport = res;
+    });
+  }
+
+  downloadMemberReport() {
+    this.reportsService.exportMemberReportCsv().subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `TeamPulse_Member_Report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   loadData() {

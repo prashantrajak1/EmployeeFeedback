@@ -45,5 +45,12 @@ namespace FeedbackTrack.API.Controllers
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
+
+        [HttpGet("active-sessions")]
+        public IActionResult GetActiveSessions()
+        {
+            var activeIds = _userService.GetActiveUserIds();
+            return Ok(activeIds);
+        }
     }
 }

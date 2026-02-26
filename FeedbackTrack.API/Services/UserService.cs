@@ -7,10 +7,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using System.Collections.Concurrent;
+
 namespace FeedbackTrack.API.Services
 {
     public class UserService : IUserService
     {
+        private static readonly ConcurrentDictionary<int, DateTime> _activeSessions = new();
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
 
@@ -35,19 +38,11 @@ namespace FeedbackTrack.API.Services
                 role = await _context.TRoles.FirstOrDefaultAsync(r => r.RoleName == "Employee");
             }
             
-            // Find or Create Department (using Stored Procedure Logic Concept primarily, but standard EF here for simplicity unless strictly forced to SP for *everything*)
-            // The prompt says "add department table stored procedure should be used". I'll try to fetch Department via SP.
-            // Note: Switched to LINQ as SQLite does not support Stored Procedures.
-            // Original Requirement: "department table stored procedure should be used" -> Not possible with SQLite.
-            // We use raw SQL to stay close to the "native query" spirit if needed, or just LINQ.
-            // Using LINQ for reliability here.
             var department = await _context.TDepartments
                 .FirstOrDefaultAsync(d => d.DepartmentName == dto.Department);
 
             if (department == null)
             {
-               // If SP doesn't find it, maybe create it? Or require valid departments. 
-               // For now, let's create it if missing, or use default.
                department = new TDepartment { DepartmentName = dto.Department };
                _context.TDepartments.Add(department);
                await _context.SaveChangesAsync();
@@ -95,6 +90,8 @@ namespace FeedbackTrack.API.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             
+            RecordActivity(user.Id); // Track login activity
+
             return new LoginResponseDto
             {
                 Token = tokenHandler.WriteToken(token),
@@ -122,6 +119,20 @@ namespace FeedbackTrack.API.Services
                 .Include(u => u.Role)
                 .Include(u => u.Department)
                 .ToListAsync();
+        }
+
+        public void RecordActivity(int userId)
+        {
+            _activeSessions[userId] = DateTime.UtcNow;
+        }
+
+        public List<int> GetActiveUserIds()
+        {
+            var cutoff = DateTime.UtcNow.AddHours(-1);
+            return _activeSessions
+                .Where(kv => kv.Value >= cutoff)
+                .Select(kv => kv.Key)
+                .ToList();
         }
     }
 }

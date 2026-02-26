@@ -8,27 +8,24 @@
     <!-- Quick Actions Grid -->
     <div class="dashboard-grid" style="margin-bottom: 40px;">
         <div class="card action-card" routerLink="/give-feedback">
-            <div class="icon-wrapper">📝</div>
             <div>
-                <h3 style="margin-bottom: 4px;">Submit Feedback</h3>
+                <h3 style="margin-bottom: 4px; color: var(--primary-color);">Submit Feedback</h3>
                 <p style="font-size: 0.85rem; color: var(--text-secondary);">Share constructive insights with your
                     colleagues.</p>
             </div>
         </div>
 
         <div class="card action-card" routerLink="/give-recognition">
-            <div class="icon-wrapper">🌟</div>
             <div>
-                <h3 style="margin-bottom: 4px;">Give Recognition</h3>
+                <h3 style="margin-bottom: 4px; color: var(--warning-color);">Give Recognition</h3>
                 <p style="font-size: 0.85rem; color: var(--text-secondary);">Celebrate a teammate's hard work and
                     dedication.</p>
             </div>
         </div>
 
-        <div class="card action-card">
-            <div class="icon-wrapper">🏆</div>
+        <div class="card action-card" (click)="scrollToAchievements()">
             <div>
-                <h3 style="margin-bottom: 4px;">My Achievements</h3>
+                <h3 style="margin-bottom: 4px; color: var(--success-color);">My Achievements</h3>
                 <p style="font-size: 0.85rem; color: var(--text-secondary);">View recognition and feedback you've
                     received.</p>
             </div>
@@ -37,7 +34,7 @@
 
     <div class="dashboard-grid">
         <!-- Recognitions Section -->
-        <div class="card">
+        <div class="card" id="achievements-section">
             <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                 <span>Received Kudos</span>
                 <span class="badge"

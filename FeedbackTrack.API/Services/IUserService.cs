@@ -9,5 +9,7 @@ namespace FeedbackTrack.API.Services
         Task<LoginResponseDto?> LoginAsync(LoginDto dto);
         Task<TUser?> GetUserByIdAsync(int id);
         Task<List<TUser>> GetAllUsersAsync();
+        void RecordActivity(int userId);
+        List<int> GetActiveUserIds();
     }
 }

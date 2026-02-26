@@ -8,6 +8,11 @@
         Loading reports...
     </div>
 
+    <div *ngIf="errorMessage" class="btn-danger"
+        style="margin-top: 40px; text-align: center; padding: 20px; border-radius: 8px;">
+        {{ errorMessage }}
+    </div>
+
     <div *ngIf="!isLoading && stats" style="margin-top: 20px;">
         <div class="dashboard-grid">
             <div class="card" style="text-align: center;">

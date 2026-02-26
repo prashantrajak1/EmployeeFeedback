@@ -67,4 +67,11 @@ export class EmployeeDashboard implements OnInit {
     // strict synchronization not needed for MVP
     this.isLoading = false;
   }
+
+  scrollToAchievements() {
+    const el = document.getElementById('achievements-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 }

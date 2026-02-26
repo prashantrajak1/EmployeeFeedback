@@ -16,19 +16,62 @@ export class Register {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     department: '',
     role: 'Employee' // Default
   };
+
   errorMessage = '';
+  emailError = '';
+  passwordError = '';
+  confirmPasswordError = '';
+
   isLoading = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  validateForm(): boolean {
+    this.emailError = '';
+    this.passwordError = '';
+    this.confirmPasswordError = '';
+    let isValid = true;
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!this.user.email || !emailRegex.test(this.user.email)) {
+      this.emailError = 'Please enter a valid email address.';
+      isValid = false;
+    }
+
+    // Password validation: 8 chars, 1 number, 1 special char, 1 uppercase, 1 lowercase
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!this.user.password || !passwordRegex.test(this.user.password)) {
+      this.passwordError = 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+      isValid = false;
+    }
+
+    // Confirm password validation
+    if (this.user.password !== this.user.confirmPassword) {
+      this.confirmPasswordError = 'Passwords do not match.';
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
   onRegister() {
-    this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.register(this.user).subscribe({
+    if (!this.validateForm()) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    // Exclude confirmPassword from the payload sent to API
+    const { confirmPassword, ...registerPayload } = this.user;
+
+    this.authService.register(registerPayload).subscribe({
       next: (res) => {
         this.isLoading = false;
         alert('Registration successful! Please login.');

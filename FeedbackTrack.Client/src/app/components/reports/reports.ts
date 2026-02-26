@@ -13,6 +13,7 @@ export class Reports implements OnInit {
   stats: any = null;
   trends: any = null;
   isLoading = true;
+  errorMessage = '';
 
   constructor(private reportsService: ReportsService) { }
 
@@ -24,6 +25,7 @@ export class Reports implements OnInit {
       },
       error: (err) => {
         console.error(err);
+        this.errorMessage = 'Failed to load report stats. Please try again later.';
         this.isLoading = false;
       }
     });
@@ -37,6 +39,7 @@ export class Reports implements OnInit {
       },
       error: (err) => {
         console.error(err);
+        // Stats loaded, but trends failed.
         this.isLoading = false;
       }
     });

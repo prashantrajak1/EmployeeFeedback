@@ -23,4 +23,12 @@ export class ReportsService {
     getTrends(): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/trends`);
     }
+
+    getMemberReport(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/member-report`);
+    }
+
+    exportMemberReportCsv(): Observable<Blob> {
+        return this.http.get(`${this.apiUrl}/export-member-report`, { responseType: 'blob' });
+    }
 }

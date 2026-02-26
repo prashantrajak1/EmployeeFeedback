@@ -1,6 +1,9 @@
 <header *ngIf="authService.isLoggedIn()">
   <div class="nav-container">
-    <a routerLink="/" class="logo">FeedbackTrack</a>
+    <div>
+      <a routerLink="/" class="logo">TeamPulse</a>
+      <div class="tagline">Employee Recognition Platform</div>
+    </div>
     <nav>
       <ul style="list-style: none; display: flex; gap: 24px; align-items: center;">
         <li *ngIf="getUserRole() === 'Employee'"><a routerLink="/employee-dashboard" routerLinkActive="active"
@@ -62,6 +65,12 @@
             <span style="font-size: 0.65rem; color: var(--text-muted);">{{ currentUser.email }}</span>
           </div>
         </li>
+        <li>
+          <button (click)="goBack()" class="btn btn-secondary"
+            style="padding: 6px 14px; font-size: 0.85rem; border: none; background: transparent; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 1.2rem;">←</span> Back
+          </button>
+        </li>
         <li><button (click)="logout()" class="btn btn-secondary"
             style="padding: 6px 14px; font-size: 0.85rem;">Logout</button></li>
       </ul>
@@ -71,7 +80,10 @@
 
 <header *ngIf="!authService.isLoggedIn()">
   <div class="nav-container">
-    <a routerLink="/" class="logo">FeedbackTrack</a>
+    <div>
+      <a routerLink="/" class="logo">TeamPulse</a>
+      <div class="tagline">Employee Recognition Platform</div>
+    </div>
     <nav>
       <ul style="list-style: none; display: flex; gap: 24px;">
         <li><a routerLink="/login" routerLinkActive="active"

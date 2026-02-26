@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FeedbackService } from '../../services/feedback';
 import { RecognitionService } from '../../services/recognition';
 import { UserService } from '../../services/user';
+import { ReportsService } from '../../services/reports';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,6 +18,7 @@ export class ManagerDashboard implements OnInit {
   teamFeedback: any[] = [];
   users: any[] = [];
   leaderboard: any[] = [];
+  memberReport: any[] = [];
   targetUserId: number | null = null;
   isLoading = false;
   reviewCommentMap: { [feedbackId: number]: string } = {};
@@ -24,12 +26,14 @@ export class ManagerDashboard implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private recognitionService: RecognitionService,
-    private userService: UserService
+    private userService: UserService,
+    private reportsService: ReportsService
   ) { }
 
   ngOnInit() {
     this.loadUsers();
     this.loadLeaderboard();
+    this.loadMemberReport();
   }
 
   loadUsers() {
@@ -44,6 +48,23 @@ export class ManagerDashboard implements OnInit {
 
   loadLeaderboard() {
     this.recognitionService.getLeaderboard().subscribe(res => this.leaderboard = res);
+  }
+
+  loadMemberReport() {
+    this.reportsService.getMemberReport().subscribe(res => {
+      this.memberReport = res;
+    });
+  }
+
+  downloadMemberReport() {
+    this.reportsService.exportMemberReportCsv().subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `TeamPulse_Member_Report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   loadTeamFeedback() {

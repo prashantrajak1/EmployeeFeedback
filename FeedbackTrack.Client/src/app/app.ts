@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { AuthService } from './services/auth';
 import { NotificationService } from './services/notification';
 
@@ -18,7 +18,8 @@ export class App implements OnInit {
   constructor(
     public authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -59,8 +60,14 @@ export class App implements OnInit {
     return this.authService.getUser();
   }
 
+  goBack() {
+    this.location.back();
+  }
+
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    if (confirm('Are you sure you want to log out?')) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 }
