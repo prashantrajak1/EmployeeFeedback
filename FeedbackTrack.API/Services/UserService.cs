@@ -69,7 +69,7 @@ namespace FeedbackTrack.API.Services
                 .Include(u => u.Department)
                 .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-            if (user == null || user.Password != dto.Password) 
+            if (user == null || user.Password != dto.Password || !user.IsActive) 
             {
                 return null;
             }

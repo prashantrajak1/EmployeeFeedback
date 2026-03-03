@@ -2,10 +2,11 @@
     <div class="card">
         <h2>Give Feedback</h2>
 
-        <div *ngIf="successMessage" class="btn-success" style="margin-bottom: 15px; text-align: center;">
-            {{ successMessage }}
+        <div *ngIf="successMessage" class="success-popup">
+            <span style="font-size: 1.2rem;">✅</span> {{ successMessage }}
         </div>
-        <div *ngIf="errorMessage" class="btn-danger" style="margin-bottom: 15px; text-align: center;">
+        <div *ngIf="errorMessage" class="btn-danger"
+            style="margin-bottom: 15px; text-align: center; padding: 10px; border-radius: 8px;">
             {{ errorMessage }}
         </div>
 

@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { FeedbackService } from '../../services/feedback';
 import { UserService } from '../../services/user';
 import { AuthService } from '../../services/auth';
+import { UiService } from '../../services/ui.service';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-feedback-form',
@@ -27,7 +29,9 @@ export class FeedbackForm implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private uiService: UiService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -61,7 +65,19 @@ export class FeedbackForm implements OnInit {
     this.feedbackService.submitFeedback(this.feedback).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.successMessage = 'Feedback submitted successfully!';
+        this.uiService.showToast('Feedback submitted successfully!', 'success');
+
+        const recipient = this.users.find(u => u.id === this.feedback.toUserId);
+        const sender = this.uiService.isProfileSidebarVisible$ // This is a bit of a hack, better to get from AuthService
+        // Actually AuthService is not injected in a way to easily get name here in this diff, let's just use generic "someone" or inject AuthService
+
+        this.notificationService.pushNotification({
+          title: 'New Feedback Received',
+          message: `You received new feedback from ${this.feedback.isAnonymous ? 'Anonymous' : 'a colleague'}. Check your dashboard!`,
+          userId: this.feedback.toUserId,
+          createdAt: new Date().toISOString()
+        });
+
         setTimeout(() => {
           // Go back to previous dashboard?
           // How do we know which one? 

@@ -1,0 +1,77 @@
+host {
+    display: block;
+    height: 100vh;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: url('/assets/auth_bg.png') no-repeat center center;
+    background-size: cover;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 2.5rem;
+    background: var(--background-main, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #475569);
+    margin-bottom: 0.5rem;
+}
+
+.login-card input,
+.login-card select {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-card input:focus,
+.login-card select:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-color, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    outline: none;
+}
+
+.btn-primary {
+    padding: 0.85rem;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    border-radius: 10px;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--primary-color, #6366f1) 0%, var(--primary-hover, #4f46e5) 100%);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+}

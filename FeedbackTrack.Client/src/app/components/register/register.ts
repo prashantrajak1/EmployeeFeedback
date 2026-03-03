@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-register',
@@ -28,7 +29,11 @@ export class Register {
 
   isLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
 
   validateForm(): boolean {
     this.emailError = '';
@@ -75,6 +80,12 @@ export class Register {
       next: (res) => {
         this.isLoading = false;
         alert('Registration successful! Please login.');
+        this.notificationService.pushNotification({
+          title: 'New User Registered',
+          message: `${this.user.name} has joined the platform as ${this.user.role}.`,
+          isAdminOnly: true,
+          createdAt: new Date().toISOString()
+        });
         this.router.navigate(['/login']);
       },
       error: (err) => {

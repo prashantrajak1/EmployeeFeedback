@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RecognitionService } from '../../services/recognition';
 import { UserService } from '../../services/user';
+import { UiService } from '../../services/ui.service';
+import { NotificationService } from '../../services/notification';
 
 @Component({
   selector: 'app-recognition-form',
@@ -29,7 +31,9 @@ export class RecognitionForm implements OnInit {
   constructor(
     private recognitionService: RecognitionService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private uiService: UiService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -64,7 +68,15 @@ export class RecognitionForm implements OnInit {
     this.recognitionService.sendRecognition(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.successMessage = 'Kudos sent successfully!';
+        this.uiService.showToast('Kudos sent successfully!', 'success');
+
+        this.notificationService.pushNotification({
+          title: 'Recognition Received!',
+          message: `You earned the "${payload.badgeType}" badge!`,
+          userId: payload.toUserId,
+          createdAt: new Date().toISOString()
+        });
+
         setTimeout(() => {
           this.router.navigate(['/employee-dashboard']);
         }, 1500);

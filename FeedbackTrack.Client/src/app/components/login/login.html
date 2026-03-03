@@ -1,47 +1,136 @@
-<div class="login-container">
-    <div class="login-card fade-in">
-        <div class="login-header">
-            <h2 class="login-title">TeamPulse</h2>
-            <div class="tagline" style="margin-bottom: 1.5rem;">Employee Recognition Platform</div>
-            <p class="login-subtitle">Sign in to continue</p>
+<div class="auth-wrapper fade-in">
+    <div class="auth-card">
+        <!-- Exact Mockup Header inside card -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                    class="mockup-logo-icon">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#logo-grad-auth)"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <defs>
+                        <linearGradient id="logo-grad-auth" x1="0" y1="0" x2="24" y2="24"
+                            gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#3b82f6" />
+                            <stop offset="1" stop-color="#2dd4bf" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                TeamPulse
+            </div>
+            <div class="auth-tagline">Employee Feedback & Recognition System</div>
         </div>
 
-        <div *ngIf="errorMessage" class="btn-danger"
-            style="margin-bottom: 1.5rem; text-align: center; width: 100%; border-radius: 8px; padding: 10px;">
-            {{ errorMessage }}
+        <div class="auth-single-column">
+            <!-- ================= LOGIN COLUMN ================= -->
+            <div class="auth-section login-section" *ngIf="!isRegistering">
+                <h3 class="auth-title">Login</h3>
+
+                <div *ngIf="errorMessage" class="error-msg text-center mb-3">
+                    {{ errorMessage }}
+                </div>
+
+                <form (ngSubmit)="onLogin()">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" [(ngModel)]="email" name="email" required
+                            placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" [(ngModel)]="password" name="password" required
+                            placeholder="Enter your password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Select Role</label>
+                        <select id="role" [(ngModel)]="selectedRole" name="role" required>
+                            <option value="Employee">Employee (User)</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <label class="remember-me"
+                            style="display: flex; gap: 8px; align-items: center; cursor: pointer;">
+                            <input type="checkbox" style="width: auto; margin: 0; outline: none; box-shadow: none;">
+                            <span style="font-weight: 500; font-size: 0.85rem; color: var(--text-secondary);">Remember
+                                Me</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn auth-btn login-btn" [disabled]="isLoading">
+                        {{ isLoading ? 'Logging in...' : 'Log In' }}
+                    </button>
+
+                    <div class="auth-toggle-link">
+                        New User? <a href="javascript:void(0)" (click)="toggleView()">Register</a>
+                    </div>
+
+                    <div class="text-right" style="margin-top: 12px; text-align: right;">
+                        <a href="javascript:void(0)"
+                            style="color: #3b82f6; text-decoration: none; font-size: 0.85rem; font-weight: 500;">Forgot
+                            Password?</a>
+                    </div>
+                </form>
+            </div>
+
         </div>
 
-        <form (ngSubmit)="onLogin()">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" [(ngModel)]="email" name="email" required placeholder="Enter your email">
+        <!-- ================= REGISTER COLUMN ================= -->
+        <div class="auth-section register-section" *ngIf="isRegistering">
+            <h3 class="auth-title">Register</h3>
+
+            <div *ngIf="regErrorMessage" class="error-msg text-center mb-3">
+                {{ regErrorMessage }}
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" [(ngModel)]="password" name="password" required
-                    placeholder="Enter your password">
-            </div>
+            <form (ngSubmit)="onRegister()">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" [(ngModel)]="regUser.name" name="regName" required
+                        placeholder="John Doe">
+                </div>
 
-            <div class="form-group">
-                <label for="role">Login As</label>
-                <select id="role" [(ngModel)]="selectedRole" name="role" required>
-                    <option value="Employee">User (Employee)</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" [(ngModel)]="regUser.email" name="regEmail" required
+                        placeholder="name@company.com">
+                    <div *ngIf="regEmailError" class="error-msg-small">{{ regEmailError }}</div>
+                </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="isLoading">
-                {{ isLoading ? 'Logging in...' : 'Login' }}
-            </button>
-        </form>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" [(ngModel)]="regUser.password" name="regPassword" required
+                        placeholder="Create a strong password">
+                    <div *ngIf="regPasswordError" class="error-msg-small">{{ regPasswordError }}</div>
+                </div>
 
-        <div style="margin-top: 2rem; text-align: center;">
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
-                Don't have an account? <a routerLink="/register"
-                    style="font-weight: 600; text-decoration: none;">Register</a>
-            </p>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" [(ngModel)]="regUser.confirmPassword"
+                        name="regConfirmPassword" required placeholder="Type password again">
+                    <div *ngIf="regConfirmPasswordError" class="error-msg-small">{{ regConfirmPasswordError }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="regRole">Role</label>
+                    <select id="regRole" [(ngModel)]="regUser.role" name="regRole" required>
+                        <option value="Employee">Employee</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn auth-btn register-btn" [disabled]="isRegLoading">
+                    {{ isRegLoading ? 'Signing up...' : 'Sign Up' }}
+                </button>
+
+                <div class="auth-toggle-link">
+                    Already have an account? <a href="javascript:void(0)" (click)="toggleView()">Back to Login</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

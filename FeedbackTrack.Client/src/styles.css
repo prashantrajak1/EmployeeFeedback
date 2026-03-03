@@ -7,10 +7,11 @@
   --danger-color: #f43f5e;
   --warning-color: #f59e0b;
   --background-alt: #f1f5f9;
-  --background-main: #f8fafc;
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --text-primary: #0f172a;
+  --background-main: #f1f5f9;
+  --header-bg: #1e40af;
+  /* Dark blue from mockup */
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --border-radius-lg: 16px;
@@ -31,9 +32,6 @@
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--background-main);
-  background-image:
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%);
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
@@ -213,47 +211,38 @@ tr:hover td {
 
 /* Navbar Enhancement */
 header {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 16px 0;
+  background: var(--header-bg);
+  padding: 12px 0;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
-  max-width: 1100px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 .logo {
-  font-size: 1.8rem;
-  /* slightly larger for TeamPulse */
-  font-weight: 900;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white;
   text-decoration: none;
-  letter-spacing: -0.03em;
-  display: block;
-  /* to allow tagline below */
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .tagline {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-top: -4px;
-  /* pull it closer to the bold title */
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  margin-top: 2px;
 }
 
 /* Animations */

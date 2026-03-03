@@ -1,94 +1,153 @@
-<div class="container fade-in">
-    <div style="margin-bottom: 40px;">
-        <h2 class="dashboard-title">Employee Hub</h2>
-        <p style="color: var(--text-secondary); margin-top: -1.5rem;">Grow through feedback and appreciate your peers.
-        </p>
-    </div>
+<div class="dashboard-layout fade-in">
+    <div class="main-content">
 
-    <!-- Quick Actions Grid -->
-    <div class="dashboard-grid" style="margin-bottom: 40px;">
-        <div class="card action-card" routerLink="/give-feedback">
-            <div>
-                <h3 style="margin-bottom: 4px; color: var(--primary-color);">Submit Feedback</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary);">Share constructive insights with your
-                    colleagues.</p>
-            </div>
+        <div class="welcome-banner">
+            <h2 class="welcome-title">Welcome, {{ user?.name || 'Employee' }}!</h2>
         </div>
 
-        <div class="card action-card" routerLink="/give-recognition">
-            <div>
-                <h3 style="margin-bottom: 4px; color: var(--warning-color);">Give Recognition</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary);">Celebrate a teammate's hard work and
-                    dedication.</p>
-            </div>
-        </div>
-
-        <div class="card action-card" (click)="scrollToAchievements()">
-            <div>
-                <h3 style="margin-bottom: 4px; color: var(--success-color);">My Achievements</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary);">View recognition and feedback you've
-                    received.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="dashboard-grid">
-        <!-- Recognitions Section -->
-        <div class="card" id="achievements-section">
-            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <span>Received Kudos</span>
-                <span class="badge"
-                    style="font-size: 0.7rem; background: var(--success-color); color: white; padding: 2px 8px; border-radius: 12px;">{{
-                    recognitions.length }}</span>
-            </h3>
-
-            <div *ngIf="recognitions.length === 0" style="text-align: center; padding: 40px 0;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">☁️</div>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">No recognitions yet. Keep doing great work!</p>
-            </div>
-
-            <div *ngFor="let rec of recognitions" class="list-item">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
-                        <div style="font-weight: 700; color: var(--primary-color);">{{ rec.badgeType }}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">From: {{ rec.fromUserName || 'A
-                            Peer' }}</div>
-                        <p style="margin-top: 8px; font-size: 0.9rem; font-style: italic; color: var(--text-primary);">
-                            "{{ rec.comments }}"</p>
-                    </div>
-                    <div class="stat-label"
-                        style="background: var(--background-alt); padding: 4px 8px; border-radius: 4px;">
-                        +{{ rec.points }} pts
+        <!-- Metric Cards -->
+        <div class="metric-row">
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Received Recognitions</span>
+                    <div class="metric-icon blue-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3.5a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5z" />
+                        </svg>
                     </div>
                 </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">{{ rec.date |
-                    date:'mediumDate' }}</div>
+                <!-- Flex bottom row logic -->
+                <div class="metric-bottom">
+                    <div class="metric-value blue-text">{{ recognitions.length }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Feedback Received</span>
+                    <div class="metric-icon green-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-bottom">
+                    <div class="metric-value green-text">{{ feedbacks.length }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Points Earned</span>
+                    <div class="metric-icon orange-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-bottom">
+                    <div class="metric-value orange-text">{{ pointsEarned }}</div>
+                </div>
             </div>
         </div>
 
-        <!-- Feedback Section -->
-        <div class="card">
-            <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <span>Recent Feedback</span>
-                <span class="badge"
-                    style="font-size: 0.7rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px;">{{
-                    feedbacks.length }}</span>
-            </h3>
+        <!-- Bottom Grid Layout -->
+        <div class="dashboard-main-grid">
 
-            <div *ngIf="feedbacks.length === 0" style="text-align: center; padding: 40px 0;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">📩</div>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">No feedback received yet.</p>
-            </div>
+            <!-- Left Column -->
+            <div class="grid-left">
+                <!-- Give Feedback Card -->
+                <div class="box-card fade-in">
+                    <h3 class="box-title">Give Feedback</h3>
+                    <div class="action-buttons">
+                        <button class="btn border-btn-blue" routerLink="/give-feedback">
+                            <span style="margin-right: 6px;">✎</span> Give Feedback
+                        </button>
+                        <button class="btn bg-btn-green" routerLink="/give-recognition">
+                            <span style="margin-right: 6px;">🏅</span> Give Recognition
+                        </button>
+                    </div>
+                </div>
 
-            <div *ngFor="let msg of feedbacks" class="list-item">
-                <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5;">"{{ msg.description }}"</p>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">
-                        By {{ msg.isAnonymous ? 'Anonymous' : (msg.fromUserName || 'Colleague') }}
-                    </span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ msg.date | date:'shortDate' }}</span>
+                <!-- Recent Recognitions Feed -->
+                <div class="box-card fade-in" style="margin-top: 24px;">
+                    <div class="box-header">
+                        <h3 class="box-title" style="margin: 0; border: none;">Recent Recognitions</h3>
+                        <div class="carousel-controls" *ngIf="recognitions.length > 1">
+                            <span class="carousel-counter">{{ recIndex + 1 }} / {{ recognitions.length }}</span>
+                            <button class="carousel-btn" [disabled]="recIndex === 0"
+                                (click)="prevItem('rec')">❮</button>
+                            <button class="carousel-btn" [disabled]="recIndex === recognitions.length - 1"
+                                (click)="nextItem('rec')">❯</button>
+                        </div>
+                    </div>
+                    <div class="activity-list single-item-view" id="rec-list">
+                        <div class="activity-item rec-card" *ngIf="recognitions.length > 0">
+                            <div class="activity-icon blue-solid"></div>
+                            <div class="activity-text">
+                                You were recognized for <span class="highlight-green">"{{
+                                    recognitions[recIndex].badgeType }}"</span>.
+                                <p class="card-description" style="margin-top: 10px; font-style: italic;">"{{
+                                    recognitions[recIndex].description || 'No message provided.' }}"</p>
+                            </div>
+                        </div>
+                        <div *ngIf="recognitions.length === 0" class="empty-state">No recognitions yet.</div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Right Column -->
+            <div class="grid-right fade-in">
+                <!-- Recent Activity (Feedback) Card -->
+                <div class="box-card h-full" style="display: flex; flex-direction: column;">
+                    <div class="box-header">
+                        <h3 class="box-title" style="margin: 0; border: none;">Recent Feedback</h3>
+                        <div class="carousel-controls" *ngIf="feedbacks.length > 1">
+                            <span class="carousel-counter">{{ feedIndex + 1 }} / {{ feedbacks.length }}</span>
+                            <button class="carousel-btn" [disabled]="feedIndex === 0"
+                                (click)="prevItem('feed')">❮</button>
+                            <button class="carousel-btn" [disabled]="feedIndex === feedbacks.length - 1"
+                                (click)="nextItem('feed')">❯</button>
+                        </div>
+                    </div>
+
+                    <div class="activity-list single-item-view" id="feed-list" style="flex: 1;">
+                        <div class="activity-item feed-card" *ngIf="feedbacks.length > 0"
+                            style="flex-direction: column; align-items: flex-start;">
+                            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                                <div class="activity-icon"
+                                    [ngClass]="feedIndex % 2 === 0 ? 'orange-solid' : 'green-solid'">
+                                </div>
+                                <div class="activity-text" style="flex: 1;">
+                                    <span class="highlight-orange">{{ feedbacks[feedIndex].fromUserName || 'Colleague'
+                                        }}</span> sent you
+                                    feedback.
+                                </div>
+                            </div>
+                            <div class="details-container expanded">
+                                <p style="margin: 12px 0 0; font-style: italic; color: #475569;">"{{
+                                    feedbacks[feedIndex].description }}"</p>
+                                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 12px;">{{
+                                    feedbacks[feedIndex].date |
+                                    date:'mediumDate' }}</div>
+                            </div>
+                        </div>
+                        <div *ngIf="feedbacks.length === 0" class="empty-state">No feedback records found.</div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 20px;" *ngIf="feedbacks.length > 0">
+                        <button class="btn bg-btn-blue btn-sm">View All</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

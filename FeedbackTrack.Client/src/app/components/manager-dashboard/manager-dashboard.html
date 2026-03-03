@@ -1,171 +1,154 @@
-<div class="container fade-in">
-    <div style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
-        <div>
-            <h2 class="dashboard-title" style="margin-bottom: 0.5rem;">Leadership Hub</h2>
-            <p style="color: var(--text-secondary);">Monitor, mentor, and motivate your team through data-driven
-                insights.</p>
+<div class="dashboard-layout fade-in">
+    <div class="main-content">
+
+        <div class="welcome-banner" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="welcome-title">Welcome, {{ user?.name || 'Manager' }}!</h2>
+            <button class="btn btn-outline" (click)="downloadDetailedReport()">📥 Download Team Report</button>
         </div>
-        <div class="card action-card" routerLink="/reports"
-            style="margin-bottom: 0; min-width: 250px; flex-direction: row; align-items: center; padding: 16px;">
-            <div class="icon-wrapper" style="width: 40px; height: 40px; font-size: 1.2rem;">📊</div>
-            <div style="flex: 1;">
-                <h4 style="margin: 0; font-size: 0.95rem;">Generate Reports</h4>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Export team performance data.</p>
+
+        <!-- Metric Cards -->
+        <div class="metric-row">
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Team Feedback</span>
+                    <div class="metric-icon blue-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-bottom">
+                    <div class="metric-value blue-text">{{ teamFeedbackCount }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Pending Reviews</span>
+                    <div class="metric-icon green-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-bottom">
+                    <div class="metric-value green-text">{{ pendingReviewsCount }}</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-info">
+                    <span class="metric-label">Team Recognitions</span>
+                    <div class="metric-icon orange-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="metric-bottom">
+                    <div class="metric-value orange-text">{{ teamRecognitionsCount }}</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="dashboard-grid">
-        <!-- Team Feedback Review -->
-        <div class="card" style="grid-column: span 2;">
-            <h3 style="margin-bottom: 8px;">Review Feedback</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 24px;">Analyze the qualitative
-                feedback received by your team members.</p>
+        <!-- Feedback to Review Section -->
+        <div class="box-card mb-24">
+            <div class="box-header">
+                <h3 class="box-title" style="margin: 0; border: none;">Feedback to Review</h3>
+                <div class="carousel-controls" *ngIf="teamFeedback.length > 1">
+                    <span class="carousel-counter">{{ reviewIndex + 1 }} / {{ teamFeedback.length }}</span>
+                    <button class="carousel-btn" [disabled]="reviewIndex === 0" (click)="prevReview()">❮</button>
+                    <button class="carousel-btn" [disabled]="reviewIndex === teamFeedback.length - 1"
+                        (click)="nextReview()">❯</button>
+                </div>
+            </div>
 
-            <div style="display: flex; gap: 12px; margin-bottom: 30px;">
-                <select [(ngModel)]="targetUserId" class="form-control"
-                    style="flex: 1; border-radius: 12px; border: 1px solid var(--background-alt); background: var(--background-main);">
-                    <option [ngValue]="null" disabled>Select team member to review...</option>
-                    <option *ngFor="let user of users" [ngValue]="user.id">
-                        {{ user.name }} — {{ user.departmentName || 'Unknown' }}
-                    </option>
+            <div class="review-controls">
+                <select [(ngModel)]="targetUserId" (ngModelChange)="loadTeamFeedback()" class="manager-select">
+                    <option [ngValue]="null">Select team member...</option>
+                    <option *ngFor="let u of users" [ngValue]="u.id">{{ u.name }}</option>
                 </select>
-                <button (click)="loadTeamFeedback()" class="btn btn-primary"
-                    [disabled]="isLoading || targetUserId === null">
-                    {{ isLoading ? 'Analyzing...' : 'View Insights' }}
-                </button>
+                <div *ngIf="isLoading" class="loading-inline">
+                    <span class="spinner"></span> Analyzing team sentiment...
+                </div>
             </div>
 
-            <div *ngIf="teamFeedback.length > 0" class="fade-in">
-                <div *ngFor="let msg of teamFeedback" class="list-item"
-                    style="padding: 20px; background: var(--background-main); border-radius: 12px; margin-bottom: 12px; border: none;">
-                    <p style="font-size: 1rem; color: var(--text-primary); line-height: 1.6; font-style: italic;">"{{
-                        msg.description }}"</p>
-                    <div
-                        style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 12px;">
-                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">
-                            Target: {{ msg.toUserName || 'Member' }}
-                        </span>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">
-                            {{ msg.isAnonymous ? 'Anonymous' : msg.fromUserName }} • {{ msg.date | date:'mediumDate'
-                            }}
-                        </span>
+            <div class="feedback-list single-item-view" id="team-feed-list" *ngIf="teamFeedback.length > 0">
+                <div class="feedback-row feed-card expanded-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div class="feedback-meta">
+                            <span class="from-user">{{ teamFeedback[reviewIndex].isAnonymous ? 'Anonymous' :
+                                teamFeedback[reviewIndex].fromUserName }}</span>
+                            <span class="feedback-date">{{ teamFeedback[reviewIndex].date | date:'shortDate' }}</span>
+                        </div>
                     </div>
 
-                    <!-- Review Section -->
-                    <div
-                        style="margin-top: 20px; padding: 16px; background: white; border-radius: 12px; border: 1px solid rgba(0,0,0,0.03);">
-                        <h4 style="font-size: 0.85rem; margin-bottom: 12px; color: var(--text-primary);">Manager
-                            Analysis & Reviews</h4>
+                    <div class="details-container expanded" style="width: 100%;">
+                        <p class="feedback-text" style="margin-bottom: 20px; font-style: italic;">"{{
+                            teamFeedback[reviewIndex].description }}"</p>
 
-                        <div *ngFor="let r of msg.reviews"
-                            style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--background-alt);">
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">{{ r.comments }}</p>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">{{ r.date | date:'short'
-                                }}</span>
-                        </div>
-
-                        <div *ngIf="msg.reviews?.length === 0"
-                            style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
-                            No reviews yet. Add your analysis below.
-                        </div>
-
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" [(ngModel)]="reviewCommentMap[msg.id]"
-                                placeholder="Add a review or action item..." class="form-control"
-                                style="flex: 1; font-size: 0.85rem; padding: 8px 12px; border-radius: 8px;">
-                            <button (click)="submitReview(msg.id)" class="btn btn-primary"
-                                style="padding: 8px 16px; font-size: 0.8rem;">
-                                Post
-                            </button>
+                        <div class="review-actions"
+                            style="margin-top: 0; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                            <div class="review-status"
+                                [ngClass]="teamFeedback[reviewIndex].reviews.length > 0 ? 'status-reviewed' : 'status-pending'">
+                                {{ teamFeedback[reviewIndex].reviews.length > 0 ? 'Reviewed' : 'Pending Review' }}
+                            </div>
+                            <div class="input-group">
+                                <input type="text" [(ngModel)]="reviewCommentMap[teamFeedback[reviewIndex].id]"
+                                    placeholder="Add manager insight..." class="insight-input">
+                                <button (click)="submitReview(teamFeedback[reviewIndex].id)"
+                                    class="btn btn-blue btn-tiny">Post</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div *ngIf="teamFeedback.length === 0 && !isLoading && targetUserId"
-                style="text-align: center; padding: 40px;">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">🔍</div>
-                <p style="color: var(--text-muted);">No feedback records found for this member.</p>
+            <div *ngIf="teamFeedback.length === 0 && targetUserId" class="empty-state">
+                No recent feedback for this team member.
             </div>
         </div>
 
-        <!-- Team Engagement -->
-        <div class="card">
-            <h3 style="margin-bottom: 8px;">Team Engagement</h3>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px;">Recognition leaderboard
-                based on appreciation points.</p>
-
-            <div *ngIf="leaderboard.length === 0"
-                style="text-align: center; padding: 30px 0; color: var(--text-muted);">
-                Calculating engagement metrics...
-            </div>
-
-            <div *ngFor="let entry of leaderboard; let i = index"
-                style="display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 12px; background: var(--background-main); margin-bottom: 10px; transition: transform 0.2s;">
-                <div
-                    style="width: 32px; height: 32px; background: var(--primary-gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
-                    {{ i + 1 }}
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-size: 0.95rem;">{{ entry.user?.name || 'Team Member' }}</div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">{{ entry.user?.department?.departmentName
-                        }}</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-weight: 800; color: var(--success-color);">{{ entry.totalPoints }}</div>
-                    <div
-                        style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
-                        Points</div>
+        <!-- Charts Placeholder Grid -->
+        <div class="dashboard-main-grid">
+            <div class="box-card">
+                <h3 class="box-title">Engagement Overview</h3>
+                <div class="chart-placeholder line-chart">
+                    <!-- Line chart visual -->
+                    <div class="chart-visual">
+                        <svg viewBox="0 0 400 150" class="spark-line">
+                            <path d="M0,120 Q50,70 100,90 T200,40 T300,60 T400,20" fill="none" stroke="#3b82f6"
+                                stroke-width="3" />
+                        </svg>
+                        <div class="chart-labels">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Team Member Report -->
-    <div class="card" style="margin-top: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <div>
-                <h3 style="margin-bottom: 4px;">Team Member Report</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Comprehensive breakdown of
-                    feedback and kudos per member.</p>
-            </div>
-            <button (click)="downloadMemberReport()" class="btn btn-primary"
-                style="font-size: 0.8rem; padding: 8px 16px;">
-                Download CSV
-            </button>
-        </div>
-
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Member Name</th>
-                        <th>Department</th>
-                        <th style="text-align: center;">Feedback Sent</th>
-                        <th style="text-align: center;">Feedback Recv</th>
-                        <th style="text-align: center;">Kudos Sent</th>
-                        <th style="text-align: center;">Kudos Recv</th>
-                        <th style="text-align: right;">Points</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let r of memberReport">
-                        <td style="font-weight: 600; color: var(--text-primary);">{{ r.userName }}</td>
-                        <td style="font-size: 0.85rem; color: var(--text-secondary);">{{ r.department }}</td>
-                        <td style="text-align: center;">{{ r.feedbackSent }}</td>
-                        <td style="text-align: center;">{{ r.feedbackReceived }}</td>
-                        <td style="text-align: center;">{{ r.kudosSent }}</td>
-                        <td style="text-align: center;">{{ r.kudosReceived }}</td>
-                        <td style="text-align: right; font-weight: 700; color: var(--success-color);">{{ r.totalPoints
-                            }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div *ngIf="memberReport.length === 0"
-                style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">
-                Loading member metrics...
+            <div class="box-card">
+                <h3 class="box-title">Recognition Breakdown</h3>
+                <div class="chart-placeholder pie-chart">
+                    <div class="pie-visual">
+                        <div class="pie-slice" style="--percent: 45; --color: #3b82f6;"></div>
+                        <div class="pie-slice" style="--percent: 30; --color: #10b981;"></div>
+                        <div class="pie-slice" style="--percent: 25; --color: #f59e0b;"></div>
+                    </div>
+                    <div class="pie-legend">
+                        <div class="legend-item"><span class="dot blue"></span> Teamwork</div>
+                        <div class="legend-item"><span class="dot green"></span> Innovation</div>
+                        <div class="legend-item"><span class="dot orange"></span> Leadership</div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
 </div>

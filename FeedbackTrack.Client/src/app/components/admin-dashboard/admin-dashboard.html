@@ -1,217 +1,225 @@
-<div class="container fade-in">
-    <div style="margin-bottom: 40px;">
-        <h2 class="dashboard-title">Control Center</h2>
-        <p style="color: var(--text-secondary); margin-top: -1.5rem;">Manage organizational health, users, and system
-            definitions.</p>
-    </div>
+<div class="dashboard-layout fade-in">
+    <div class="main-content">
 
-    <!-- Analytics Cards -->
-    <div
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 40px;">
-        <div class="card stat-card">
-            <div class="icon-wrapper" style="margin: 0 auto 12px; background: rgba(99, 102, 241, 0.1);">👥</div>
-            <div class="stat-value">{{ users.length }}</div>
-            <div class="stat-label">Total Users</div>
+        <div class="welcome-banner" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="welcome-title">Admin Control Center</h2>
+            <button *ngIf="activeSection !== 'main'" class="btn btn-outline" (click)="setSection('main')">← Back to
+                Overview</button>
         </div>
-        <div class="card stat-card">
-            <div class="icon-wrapper"
-                style="margin: 0 auto 12px; background: rgba(16, 185, 129, 0.1); color: var(--success-color);">⭐</div>
-            <div class="stat-value">{{ allRecognitions.length }}</div>
-            <div class="stat-label">Total Kudos</div>
-        </div>
-        <div class="card stat-card">
-            <div class="icon-wrapper"
-                style="margin: 0 auto 12px; background: rgba(244, 63, 94, 0.1); color: var(--danger-color);">💌</div>
-            <div class="stat-value">{{ allFeedbacks.length }}</div>
-            <div class="stat-label">Feedback Sent</div>
-        </div>
-    </div>
 
-    <div class="dashboard-grid">
-        <!-- Configuration & Analytics -->
-        <div class="card">
-            <h3 style="margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
-                <span>System Analytics</span>
-                <span class="badge"
-                    style="font-size: 0.7rem; background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 12px;">Live</span>
-            </h3>
-
-            <div
-                style="background: var(--background-alt); padding: 30px; border-radius: 16px; margin-bottom: 24px; text-align: center; height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <div style="font-size: 3rem; margin-bottom: 12px;">📊</div>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time engagement trends visualization
-                    placeholder.</p>
-                <div
-                    style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 20px; overflow: hidden;">
-                    <div style="width: 75%; height: 100%; background: var(--primary-gradient);"></div>
+        <!-- Main Overview Grid -->
+        <div *ngIf="activeSection === 'main'">
+            <!-- Metric Cards -->
+            <div class="metric-row">
+                <div class="metric-card" (click)="setSection('users')" style="cursor: pointer;">
+                    <div class="metric-info">
+                        <span class="metric-label">Total Users</span>
+                        <div class="metric-icon blue-icon">👥</div>
+                    </div>
+                    <div class="metric-bottom">
+                        <div class="metric-value blue-text">{{ users.length }}</div>
+                    </div>
+                </div>
+                <div class="metric-card" (click)="setSection('categories')" style="cursor: pointer;">
+                    <div class="metric-info">
+                        <span class="metric-label">Active Categories</span>
+                        <div class="metric-icon green-icon">🏷️</div>
+                    </div>
+                    <div class="metric-bottom">
+                        <div class="metric-value green-text">{{ activeCategoriesCount }}</div>
+                    </div>
+                </div>
+                <div class="metric-card" (click)="setSection('analytics')" style="cursor: pointer;">
+                    <div class="metric-info">
+                        <span class="metric-label">Reports Generated</span>
+                        <div class="metric-icon orange-icon">📊</div>
+                    </div>
+                    <div class="metric-bottom">
+                        <div class="metric-value orange-text">{{ reportsCount }}</div>
+                    </div>
                 </div>
             </div>
 
-            <h4 style="margin-bottom: 16px;">Feedback Categories</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;">
-                <div *ngFor="let cat of categories" class="badge"
-                    style="background: white; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 0.8rem;">
-                    {{ cat }}
+            <!-- Four Quadrants Functional Layout -->
+            <div class="admin-grid">
+                <div class="admin-quadrant box-card" (click)="setSection('users')" style="cursor: pointer;">
+                    <div class="quad-header">
+                        <div class="quad-icon blue-bg">👤</div>
+                        <h3 class="quad-title">User Management</h3>
+                    </div>
+                    <p class="quad-desc">Onboard new employees, manage roles, and monitor system access levels.</p>
                 </div>
-                <button class="btn btn-primary" style="padding: 6px 14px; font-size: 0.75rem; border-radius: 20px;">+
-                    New</button>
+
+                <div class="admin-quadrant box-card" (click)="setSection('categories')" style="cursor: pointer;">
+                    <div class="quad-header">
+                        <div class="quad-icon green-bg">🏷️</div>
+                        <h3 class="quad-title">Feedback Categories</h3>
+                    </div>
+                    <p class="quad-desc">Define and configure feedback types, kudos badges, and categories.</p>
+                </div>
+
+                <div class="admin-quadrant box-card" (click)="setSection('analytics')" style="cursor: pointer;">
+                    <div class="quad-header">
+                        <div class="quad-icon orange-bg">📈</div>
+                        <h3 class="quad-title">Analytics & Reports</h3>
+                    </div>
+                    <p class="quad-desc">Track organizational sentiment trends and generate cross-departmental reports.
+                    </p>
+                </div>
+
+                <div class="admin-quadrant box-card" (click)="setSection('settings')" style="cursor: pointer;">
+                    <div class="quad-header">
+                        <div class="quad-icon purple-bg">⚙️</div>
+                        <h3 class="quad-title">System Settings</h3>
+                    </div>
+                    <p class="quad-desc">Configure platform preferences, manage audit logs, and security protocols.</p>
+                </div>
             </div>
         </div>
 
-        <!-- User Management -->
-        <div class="card">
-            <h3 style="margin-bottom: 8px;">User Directory</h3>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px;">Manage system access and
-                roles across departments.</p>
-
-            <div style="max-height: 480px; overflow-y: auto;">
-                <table>
+        <!-- Section: User Management -->
+        <div *ngIf="activeSection === 'users'" class="fade-in">
+            <div class="box-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 class="box-title" style="margin: 0; border: none;">Manage Users</h3>
+                    <button class="btn btn-blue" (click)="showAddUserModal = true">+ Add New User</button>
+                </div>
+                <table style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>User Details</th>
-                            <th>Current Role</th>
-                            <th>Created_Date</th>
-                            <th style="text-align: center;">Session</th>
-                            <th style="text-align: right;">State</th>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let u of users">
+                            <td>{{ u.name }}</td>
+                            <td style="color: #64748b;">{{ u.email }}</td>
+                            <td><span class="role-badge">{{ u.role?.roleName || u.role }}</span></td>
                             <td>
-                                <div style="font-weight: 700; color: var(--text-primary);">{{ u.name }}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">{{ u.email }}</div>
-                            </td>
-                            <td>
-                                <span
-                                    style="font-size: 0.7rem; font-weight: 800; background: white; border: 1px solid #e2e8f0; padding: 4px 8px; border-radius: 6px; color: var(--text-secondary);">
-                                    {{ u.role?.roleName || 'Employee' }}
-                                </span>
-                            </td>
-                            <td style="font-size: 0.8rem; color: var(--text-secondary);">
-                                {{ formatDate(u.createdDate) }}
-                            </td>
-                            <td style="text-align: center;">
-                                <span *ngIf="activeSessions.has(u.id)"
-                                    style="display: inline-block; width: 10px; height: 10px; background: var(--success-color); border-radius: 50%; box-shadow: 0 0 5px var(--success-color);"
-                                    title="Online"></span>
-                                <span *ngIf="!activeSessions.has(u.id)"
-                                    style="display: inline-block; width: 10px; height: 10px; background: var(--text-muted); border-radius: 50%; opacity: 0.3;"
-                                    title="Offline"></span>
-                            </td>
-                            <td
-                                style="text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-                                <span [style.color]="u.isActive ? 'var(--success-color)' : 'var(--danger-color)'"
-                                    style="font-size: 0.8rem; font-weight: 600;">
+                                <span [style.color]="u.isActive ? '#10b981' : '#ef4444'" style="font-weight: 600;">
                                     {{ u.isActive ? 'Active' : 'Inactive' }}
                                 </span>
-                                <label class="switch"
-                                    style="position: relative; display: inline-block; width: 40px; height: 20px;">
-                                    <input type="checkbox" [checked]="u.isActive" (change)="toggleUserStatus(u)"
-                                        style="opacity: 0; width: 0; height: 0;">
-                                    <span class="slider round"
-                                        [style.background-color]="u.isActive ? 'var(--success-color)' : '#ccc'"
-                                        style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 20px;">
-                                        <span [style.transform]="u.isActive ? 'translateX(20px)' : 'translateX(0)'"
-                                            style="position: absolute; content: ''; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%;"></span>
-                                    </span>
-                                </label>
+                            </td>
+                            <td>
+                                <button class="btn btn-tiny" [class.btn-blue]="!u.isActive"
+                                    (click)="toggleUserStatus(u)">
+                                    {{ u.isActive ? 'Deactivate' : 'Activate' }}
+                                </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- Platform Activity Overview -->
-    <div style="margin-top: 40px;">
-        <h3 style="margin-bottom: 24px;">Platform Activity Overview</h3>
-
-        <div class="dashboard-grid">
-            <!-- Feedbacks Overview -->
-            <div class="card">
-                <h4 style="margin-bottom: 16px; color: var(--danger-color);">Latest Feedback</h4>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <div *ngFor="let f of allFeedbacks"
-                        style="padding: 12px; border-bottom: 1px solid var(--background-alt);">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-weight: 600; font-size: 0.85rem;">{{ f.fromUserName }} → {{ f.toUserName
-                                }}</span>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">{{ formatDate(f.date) }}</span>
-                        </div>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">{{ f.description }}</p>
+        <!-- Section: Categories -->
+        <div *ngIf="activeSection === 'categories'" class="fade-in">
+            <div class="box-card">
+                <h3 class="box-title">Edit Categories</h3>
+                <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                    <input type="text" [(ngModel)]="newCategory" (keyup.enter)="addCategory()"
+                        placeholder="Add new category..." class="insight-input" style="flex: 1;">
+                    <button class="btn btn-blue" (click)="addCategory()">Add Category</button>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    <div *ngFor="let cat of categories" class="cat-chip">
+                        {{ cat }}
+                        <span class="remove-cat" (click)="removeCategory(cat)">×</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Recognitions Overview -->
-            <div class="card">
-                <h4 style="margin-bottom: 16px; color: var(--success-color);">Latest Kudos</h4>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <div *ngFor="let r of allRecognitions"
-                        style="padding: 12px; border-bottom: 1px solid var(--background-alt);">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-weight: 600; font-size: 0.85rem;">{{ r.fromUserName }} awarded {{
-                                r.toUserName }}</span>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">{{ formatDate(r.date) }}</span>
+        <!-- Section: Analytics -->
+        <div *ngIf="activeSection === 'analytics'" class="fade-in">
+            <div class="box-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 class="box-title" style="margin: 0; border: none;">Platform Analytics</h3>
+                    <button class="btn btn-blue" (click)="downloadMemberReport()">Export System Report</button>
+                </div>
+                <!-- Mini Stats Grid -->
+                <div class="metric-row">
+                    <div class="metric-card">
+                        <span class="metric-label">Feedbacks Today</span>
+                        <div class="metric-value blue-text" style="font-size: 2rem;">{{ allFeedbacks.length }}</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Kudos Awarded</span>
+                        <div class="metric-value green-text" style="font-size: 2rem;">{{ allRecognitions.length }}</div>
+                    </div>
+                </div>
+                <!-- Activity Trend Chart -->
+                <div class="box-card" style="margin-top: 24px;">
+                    <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Platform Engagement Trend (Last
+                        7 Days)</h4>
+                    <div
+                        style="height: 180px; display: flex; align-items: flex-end; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
+                        <!-- Mock Bars -->
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 30%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Mon</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span class="badge"
-                                style="background: var(--success-color); color: white; font-size: 0.65rem; padding: 2px 6px;">{{
-                                r.badgeType }}</span>
-                            <span style="font-size: 0.8rem; font-weight: 700;">+{{ r.points }} pts</span>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 45%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Tue</span>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 25%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Wed</span>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #3b82f6; height: 75%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8; font-weight: 700;">Thu</span>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 40%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Fri</span>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 15%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Sat</span>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <div style="width: 100%; background: #e2e8f0; height: 10%; border-radius: 2px;"></div>
+                            <span style="font-size: 0.6rem; color: #94a3b8;">Sun</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Team Member Report -->
-    <div class="card" style="margin-top: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <div>
-                <h3 style="margin-bottom: 4px;">Organization Member Report</h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Comprehensive breakdown of
-                    feedback and kudos across all departments.</p>
+        <!-- Section: Settings -->
+        <div *ngIf="activeSection === 'settings'" class="fade-in">
+            <div class="box-card">
+                <h3 class="box-title">System Settings</h3>
+                <div class="empty-state">Audit logs and security policies are currently being integrated.</div>
             </div>
-            <button (click)="downloadMemberReport()" class="btn btn-primary"
-                style="font-size: 0.8rem; padding: 8px 16px;">
-                Download CSV
-            </button>
         </div>
 
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Member Name</th>
-                        <th>Department</th>
-                        <th style="text-align: center;">Feedback Sent</th>
-                        <th style="text-align: center;">Feedback Recv</th>
-                        <th style="text-align: center;">Kudos Sent</th>
-                        <th style="text-align: center;">Kudos Recv</th>
-                        <th style="text-align: right;">Points</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let r of memberReport">
-                        <td style="font-weight: 600; color: var(--text-primary);">{{ r.userName }}</td>
-                        <td style="font-size: 0.85rem; color: var(--text-secondary);">{{ r.department }}</td>
-                        <td style="text-align: center;">{{ r.feedbackSent }}</td>
-                        <td style="text-align: center;">{{ r.feedbackReceived }}</td>
-                        <td style="text-align: center;">{{ r.kudosSent }}</td>
-                        <td style="text-align: center;">{{ r.kudosReceived }}</td>
-                        <td style="text-align: right; font-weight: 700; color: var(--success-color);">{{ r.totalPoints
-                            }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div *ngIf="memberReport.length === 0"
-                style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">
-                Loading member metrics...
+    </div>
+
+    <!-- Modals -->
+    <div *ngIf="showAddUserModal" class="modal-backdrop">
+        <div class="modal-content box-card">
+            <h3 class="box-title">Add New User</h3>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <input type="text" [(ngModel)]="newUser.name" placeholder="Full Name" class="insight-input">
+                <input type="email" [(ngModel)]="newUser.email" placeholder="Email Address" class="insight-input">
+                <input type="password" [(ngModel)]="newUser.password" placeholder="Initial Password"
+                    class="insight-input">
+                <select [(ngModel)]="newUser.role" class="manager-select" style="min-width: 100%;">
+                    <option value="Employee">Employee</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button class="btn btn-blue" style="flex: 1;" (click)="addUser()">Create User</button>
+                    <button class="btn btn-outline" style="flex: 1;" (click)="showAddUserModal = false">Cancel</button>
+                </div>
             </div>
         </div>
     </div>

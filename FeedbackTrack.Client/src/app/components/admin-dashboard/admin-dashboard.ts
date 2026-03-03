@@ -5,11 +5,13 @@ import { RecognitionService } from '../../services/recognition';
 import { ReportsService } from '../../services/reports';
 import { UserService } from '../../services/user';
 import { AdminService } from '../../services/admin';
+import { AuthService } from '../../services/auth';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css'
 })
@@ -23,12 +25,31 @@ export class AdminDashboard implements OnInit {
   stats: any = null;
   isLoading = true;
   categories: string[] = ['Collaboration', 'Excellence', 'Innovation', 'Growth', 'Ownership'];
+  activeSection: string = 'main'; // main, users, categories, analytics, settings
+  showAddUserModal = false;
+  newUser = {
+    name: '',
+    email: '',
+    role: 'Employee',
+    password: ''
+  };
+  newCategory = '';
+
+  get activeCategoriesCount(): number {
+    return this.categories.length;
+  }
+
+  get reportsCount(): number {
+    // Estimate based on member report size as a proxy for platform activity
+    return this.memberReport.length + 12;
+  }
 
   constructor(
     private recognitionService: RecognitionService,
     private reportsService: ReportsService,
     private userService: UserService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -97,5 +118,32 @@ export class AdminDashboard implements OnInit {
 
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString();
+  }
+
+  setSection(section: string) {
+    this.activeSection = section;
+  }
+
+  addUser() {
+    if (!this.newUser.name || !this.newUser.email || !this.newUser.password) return;
+
+    this.authService.register(this.newUser).subscribe({
+      next: (res) => {
+        this.showAddUserModal = false;
+        this.newUser = { name: '', email: '', role: 'Employee', password: '' };
+        this.loadUsers(); // Refresh list
+      },
+      error: (err) => console.error('Failed to add user', err)
+    });
+  }
+
+  addCategory() {
+    if (!this.newCategory || this.categories.includes(this.newCategory)) return;
+    this.categories.push(this.newCategory);
+    this.newCategory = '';
+  }
+
+  removeCategory(cat: string) {
+    this.categories = this.categories.filter(c => c !== cat);
   }
 }

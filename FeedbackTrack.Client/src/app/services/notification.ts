@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
     providedIn: 'root'
 })
 export class NotificationService {
-    
+
     private apiUrl = `${environment.apiUrl}/notification`;
 
     constructor(private http: HttpClient) { }
@@ -19,5 +19,13 @@ export class NotificationService {
 
     markAsRead(id: number): Observable<any> {
         return this.http.post(`${this.apiUrl}/mark-read/${id}`, {});
+    }
+
+    // Mock for real-time notification simulation
+    private notificationSubject = new BehaviorSubject<any>(null);
+    newNotification$ = this.notificationSubject.asObservable();
+
+    pushNotification(notification: any) {
+        this.notificationSubject.next(notification);
     }
 }
