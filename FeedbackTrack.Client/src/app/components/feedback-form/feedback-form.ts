@@ -7,6 +7,7 @@ import { UserService } from '../../services/user';
 import { AuthService } from '../../services/auth';
 import { UiService } from '../../services/ui.service';
 import { NotificationService } from '../../services/notification';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-feedback-form',
@@ -31,7 +32,8 @@ export class FeedbackForm implements OnInit {
     private userService: UserService,
     private router: Router,
     private uiService: UiService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -67,24 +69,11 @@ export class FeedbackForm implements OnInit {
         this.isLoading = false;
         this.uiService.showToast('Feedback submitted successfully!', 'success');
 
-        const recipient = this.users.find(u => u.id === this.feedback.toUserId);
-        const sender = this.uiService.isProfileSidebarVisible$ // This is a bit of a hack, better to get from AuthService
-        // Actually AuthService is not injected in a way to easily get name here in this diff, let's just use generic "someone" or inject AuthService
-
-        this.notificationService.pushNotification({
-          title: 'New Feedback Received',
-          message: `You received new feedback from ${this.feedback.isAnonymous ? 'Anonymous' : 'a colleague'}. Check your dashboard!`,
-          userId: this.feedback.toUserId,
-          createdAt: new Date().toISOString()
-        });
-
         setTimeout(() => {
           // Go back to previous dashboard?
-          // How do we know which one? 
-          // Simple hack: window.history.back() or just navigate to a default
           // Let's go to employee-dashboard by default for now
           this.router.navigate(['/employee-dashboard']);
-        }, 1500);
+        }, 2000);
       },
       error: (err) => {
         this.isLoading = false;
@@ -92,5 +81,9 @@ export class FeedbackForm implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

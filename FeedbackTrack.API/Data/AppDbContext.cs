@@ -14,6 +14,7 @@ namespace FeedbackTrack.API.Data
         public DbSet<TRecognition> TRecognitions { get; set; }
         public DbSet<TReview> TReviews { get; set; }
         public DbSet<TNotification> TNotifications { get; set; }
+        public DbSet<TCategory> TCategories { get; set; }
 
         // Views and SP results
         public DbSet<vw_UserProfileView> UserProfiles { get; set; }
@@ -62,6 +63,14 @@ namespace FeedbackTrack.API.Data
                 new TDepartment { Id = 1, DepartmentName = "IT" },
                 new TDepartment { Id = 2, DepartmentName = "HR" },
                 new TDepartment { Id = 3, DepartmentName = "Sales" }
+            );
+
+            modelBuilder.Entity<TCategory>().HasData(
+                new TCategory { Id = 1, Name = "Excellent Work" },
+                new TCategory { Id = 2, Name = "Team Player" },
+                new TCategory { Id = 3, Name = "Problem Solver" },
+                new TCategory { Id = 4, Name = "Innovation" },
+                new TCategory { Id = 5, Name = "Customer Focus" }
             );
 
             // Configure Views and Keyless Entities

@@ -150,15 +150,18 @@ namespace FeedbackTrack.API.Controllers
                     FeedbackReceived = feedbacks.Count(f => f.ToUserId == u.Id),
                     KudosSent = recognitions.Count(r => r.FromUserId == u.Id),
                     KudosReceived = recognitions.Count(r => r.ToUserId == u.Id),
-                    TotalPoints = recognitions.Where(r => r.ToUserId == u.Id).Sum(r => r.Points)
+                    TotalPoints = recognitions.Where(r => r.ToUserId == u.Id).Sum(r => r.Points),
+                    // Add content aggregations
+                    RecentFeedbacks = string.Join(" | ", feedbacks.Where(f => f.ToUserId == u.Id).Take(5).Select(f => f.Description.Replace("\"", "'").Replace("\n", " "))),
+                    RecentKudos = string.Join(" | ", recognitions.Where(r => r.ToUserId == u.Id).Take(5).Select(r => $"[{r.BadgeType}] {r.Comments.Replace("\"", "'").Replace("\n", " ")}"))
                 }).OrderByDescending(x => x.TotalPoints).ToList();
 
                 var csv = new StringBuilder();
-                csv.AppendLine("Name,Department,Status,Feedback Sent,Feedback Received,Kudos Sent,Kudos Received,Total Points");
+                csv.AppendLine("Name,Department,Status,Feedback Sent,Feedback Received,Kudos Sent,Kudos Received,Total Points,Recent FeedbacksContent,Recent KudosContent");
 
                 foreach (var r in report)
                 {
-                    csv.AppendLine($"\"{r.UserName}\",\"{r.Department}\",{r.IsActive},{r.FeedbackSent},{r.FeedbackReceived},{r.KudosSent},{r.KudosReceived},{r.TotalPoints}");
+                    csv.AppendLine($"\"{r.UserName}\",\"{r.Department}\",{r.IsActive},{r.FeedbackSent},{r.FeedbackReceived},{r.KudosSent},{r.KudosReceived},{r.TotalPoints},\"{r.RecentFeedbacks}\",\"{r.RecentKudos}\"");
                 }
 
                 return File(Encoding.UTF8.GetBytes(csv.ToString()), "text/csv", $"TeamPulse_MemberReport_{DateTime.Now:yyyyMMdd}.csv");

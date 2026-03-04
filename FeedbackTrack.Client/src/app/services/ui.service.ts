@@ -13,7 +13,7 @@ export class UiService {
 
     showToast(message: string, type: 'success' | 'error' = 'success') {
         this.toastSubject.next({ message, type });
-        setTimeout(() => this.toastSubject.next(null), 2000);
+        setTimeout(() => this.toastSubject.next(null), 3000);
     }
 
     clearToast() {

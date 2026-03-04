@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, RouterModule, Router } from '@angular/router';
+import { RouterOutlet, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CommonModule, Location } from '@angular/common';
 import { AuthService } from './services/auth';
 import { NotificationService } from './services/notification';
@@ -29,29 +29,23 @@ export class App implements OnInit {
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
       this.loadNotifications();
-    }
-    this.uiService.toast$.subscribe(toast => {
-      this.currentToast = toast;
-    });
-
-    this.notificationService.newNotification$.subscribe(notif => {
-      if (notif) {
-        const user = this.authService.getUser();
-        if (!user) return;
-
-        // Criteria for showing notification:
-        // 1. It is specifically for this user (recipient)
-        // 2. It is an Admin-only system alert and current user is Admin
-        // 3. (Optional) It has no userId and is broadcast (not used much here)
-
-        const isRecipient = notif.userId === user.id;
-        const isAdminResub = notif.isAdminOnly && (user.role === 'Admin' || user.role?.roleName === 'Admin');
-
-        if (isRecipient || isAdminResub) {
-          this.notifications.unshift(notif);
+      // Poll every 10 seconds for new notifications
+      setInterval(() => {
+        if (this.authService.isLoggedIn()) {
+          this.loadNotifications();
         }
+      }, 10000);
+    }
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showProfileMenu = false;
+        this.showNotifications = false;
+        this.uiService.setProfileSidebarVisible(false);
       }
     });
+
+
   }
 
   loadNotifications() {
@@ -74,9 +68,25 @@ export class App implements OnInit {
   }
 
   markAsRead(notification: any) {
+    if (notification.isRead) return;
     this.notificationService.markAsRead(notification.id).subscribe(() => {
       notification.isRead = true;
     });
+  }
+
+  markAllRead() {
+    this.notificationService.markAllAsRead().subscribe(() => {
+      this.notifications.forEach(n => n.isRead = true);
+    });
+  }
+
+  deleteNotification(event: Event, notification: any) {
+    event.stopPropagation();
+    if (confirm('Delete this notification?')) {
+      this.notificationService.deleteNotification(notification.id).subscribe(() => {
+        this.notifications = this.notifications.filter(n => n.id !== notification.id);
+      });
+    }
   }
 
   get unreadCount(): number {

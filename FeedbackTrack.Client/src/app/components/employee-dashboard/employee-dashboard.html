@@ -80,22 +80,29 @@
                 <div class="box-card fade-in" style="margin-top: 24px;">
                     <div class="box-header">
                         <h3 class="box-title" style="margin: 0; border: none;">Recent Recognitions</h3>
-                        <div class="carousel-controls" *ngIf="recognitions.length > 1">
-                            <span class="carousel-counter">{{ recIndex + 1 }} / {{ recognitions.length }}</span>
+                        <div class="carousel-controls" *ngIf="recognitions.length > 3">
+                            <span class="carousel-counter">{{ recIndex / 3 + 1 | number:'1.0-0' }} / {{
+                                (recognitions.length / 3 + 0.9) | number:'1.0-0' }}</span>
                             <button class="carousel-btn" [disabled]="recIndex === 0"
                                 (click)="prevItem('rec')">❮</button>
-                            <button class="carousel-btn" [disabled]="recIndex === recognitions.length - 1"
+                            <button class="carousel-btn" [disabled]="recIndex + 3 >= recognitions.length"
                                 (click)="nextItem('rec')">❯</button>
                         </div>
                     </div>
-                    <div class="activity-list single-item-view" id="rec-list">
-                        <div class="activity-item rec-card" *ngIf="recognitions.length > 0">
-                            <div class="activity-icon blue-solid"></div>
-                            <div class="activity-text">
-                                You were recognized for <span class="highlight-green">"{{
-                                    recognitions[recIndex].badgeType }}"</span>.
-                                <p class="card-description" style="margin-top: 10px; font-style: italic;">"{{
-                                    recognitions[recIndex].description || 'No message provided.' }}"</p>
+                    <div class="activity-list multi-item-grid" id="rec-list">
+                        <div class="activity-item rec-card" *ngFor="let r of visibleRecognitions"
+                            style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                            <div style="display: flex; gap: 12px;">
+                                <div class="activity-icon blue-solid" style="flex-shrink: 0;"></div>
+                                <div class="activity-text">
+                                    <span class="highlight-blue">{{ r.fromUserName || 'A Colleague'
+                                        }}</span> recognized you for <span class="highlight-green">"{{
+                                        r.badgeType }}"</span>.
+                                    <p class="card-description"
+                                        style="margin-top: 8px; font-style: italic; font-size: 0.85rem; color: #475569;">
+                                        "{{
+                                        r.comments || 'No message provided.' }}"</p>
+                                </div>
                             </div>
                         </div>
                         <div *ngIf="recognitions.length === 0" class="empty-state">No recognitions yet.</div>
@@ -109,34 +116,33 @@
                 <div class="box-card h-full" style="display: flex; flex-direction: column;">
                     <div class="box-header">
                         <h3 class="box-title" style="margin: 0; border: none;">Recent Feedback</h3>
-                        <div class="carousel-controls" *ngIf="feedbacks.length > 1">
-                            <span class="carousel-counter">{{ feedIndex + 1 }} / {{ feedbacks.length }}</span>
+                        <div class="carousel-controls" *ngIf="feedbacks.length > 3">
+                            <span class="carousel-counter">{{ feedIndex / 3 + 1 | number:'1.0-0' }} / {{
+                                (feedbacks.length / 3 + 0.9) | number:'1.0-0' }}</span>
                             <button class="carousel-btn" [disabled]="feedIndex === 0"
                                 (click)="prevItem('feed')">❮</button>
-                            <button class="carousel-btn" [disabled]="feedIndex === feedbacks.length - 1"
+                            <button class="carousel-btn" [disabled]="feedIndex + 3 >= feedbacks.length"
                                 (click)="nextItem('feed')">❯</button>
                         </div>
                     </div>
 
-                    <div class="activity-list single-item-view" id="feed-list" style="flex: 1;">
-                        <div class="activity-item feed-card" *ngIf="feedbacks.length > 0"
-                            style="flex-direction: column; align-items: flex-start;">
+                    <div class="activity-list multi-item-grid" id="feed-list" style="flex: 1;">
+                        <div class="activity-item feed-card" *ngFor="let f of visibleFeedbacks; let i = index"
+                            style="flex-direction: column; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
                             <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                                <div class="activity-icon"
-                                    [ngClass]="feedIndex % 2 === 0 ? 'orange-solid' : 'green-solid'">
+                                <div class="activity-icon" [ngClass]="i % 2 === 0 ? 'orange-solid' : 'green-solid'"
+                                    style="flex-shrink: 0;">
                                 </div>
                                 <div class="activity-text" style="flex: 1;">
-                                    <span class="highlight-orange">{{ feedbacks[feedIndex].fromUserName || 'Colleague'
-                                        }}</span> sent you
-                                    feedback.
+                                    <span class="highlight-orange">{{ f.fromUserName || 'Colleague'
+                                        }}</span> sent you feedback.
                                 </div>
                             </div>
-                            <div class="details-container expanded">
-                                <p style="margin: 12px 0 0; font-style: italic; color: #475569;">"{{
-                                    feedbacks[feedIndex].description }}"</p>
-                                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 12px;">{{
-                                    feedbacks[feedIndex].date |
-                                    date:'mediumDate' }}</div>
+                            <div class="details-container expanded" style="width: 100%;">
+                                <p style="margin: 8px 0 0; font-style: italic; color: #475569; font-size: 0.85rem;">"{{
+                                    f.description }}"</p>
+                                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 8px;">{{
+                                    f.date | date:'mediumDate' }}</div>
                             </div>
                         </div>
                         <div *ngIf="feedbacks.length === 0" class="empty-state">No feedback records found.</div>

@@ -120,14 +120,12 @@
             <div class="box-card">
                 <h3 class="box-title">Engagement Overview</h3>
                 <div class="chart-placeholder line-chart">
-                    <!-- Line chart visual -->
                     <div class="chart-visual">
                         <svg viewBox="0 0 400 150" class="spark-line">
-                            <path d="M0,120 Q50,70 100,90 T200,40 T300,60 T400,20" fill="none" stroke="#3b82f6"
-                                stroke-width="3" />
+                            <path [attr.d]="chartPoints" fill="none" stroke="#3b82f6" stroke-width="3" />
                         </svg>
                         <div class="chart-labels">
-                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                            <span *ngFor="let label of chartLabels">{{ label }}</span>
                         </div>
                     </div>
                 </div>
@@ -137,14 +135,14 @@
                 <h3 class="box-title">Recognition Breakdown</h3>
                 <div class="chart-placeholder pie-chart">
                     <div class="pie-visual">
-                        <div class="pie-slice" style="--percent: 45; --color: #3b82f6;"></div>
-                        <div class="pie-slice" style="--percent: 30; --color: #10b981;"></div>
-                        <div class="pie-slice" style="--percent: 25; --color: #f59e0b;"></div>
+                        <div *ngFor="let s of pieSegments; let i = index" class="pie-slice"
+                            [style.--percent]="s.percent" [style.--color]="s.color"></div>
                     </div>
                     <div class="pie-legend">
-                        <div class="legend-item"><span class="dot blue"></span> Teamwork</div>
-                        <div class="legend-item"><span class="dot green"></span> Innovation</div>
-                        <div class="legend-item"><span class="dot orange"></span> Leadership</div>
+                        <div *ngFor="let s of pieSegments" class="legend-item">
+                            <span class="dot" [style.background]="s.color"></span> {{ s.label }} ({{ s.percent |
+                            number:'1.0-0' }}%)
+                        </div>
                     </div>
                 </div>
             </div>

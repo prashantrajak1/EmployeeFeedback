@@ -17,6 +17,18 @@ export class AdminService {
         return this.http.post(`${this.apiUrl}/toggle-user/${userId}`, {});
     }
 
+    getCategories(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.apiUrl}/categories`);
+    }
+
+    addCategory(name: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/categories`, { name });
+    }
+
+    deleteCategory(name: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/categories/${encodeURIComponent(name)}`);
+    }
+
     getAllFeedbacks(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/all-feedbacks`);
     }

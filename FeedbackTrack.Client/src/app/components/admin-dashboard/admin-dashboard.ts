@@ -23,8 +23,11 @@ export class AdminDashboard implements OnInit {
   memberReport: any[] = [];
   activeSessions: Set<number> = new Set();
   stats: any = null;
+  recognitionBreakdown: { type: string, count: number, percentage: number, color: string }[] = [];
+  weeklyTrend: { day: string, height: number, isToday: boolean }[] = [];
+  auditLogs: { date: string, action: string, user: string, status: string }[] = [];
   isLoading = true;
-  categories: string[] = ['Collaboration', 'Excellence', 'Innovation', 'Growth', 'Ownership'];
+  categories: string[] = [];
   activeSection: string = 'main'; // main, users, categories, analytics, settings
   showAddUserModal = false;
   newUser = {
@@ -57,6 +60,13 @@ export class AdminDashboard implements OnInit {
     this.loadUsers();
     this.loadGlobalActivity();
     this.loadMemberReport();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.adminService.getCategories().subscribe(res => {
+      this.categories = res;
+    });
   }
 
   loadUsers() {
@@ -71,8 +81,59 @@ export class AdminDashboard implements OnInit {
   }
 
   loadGlobalActivity() {
-    this.adminService.getAllFeedbacks().subscribe(res => this.allFeedbacks = res);
-    this.adminService.getAllRecognitions().subscribe(res => this.allRecognitions = res);
+    this.adminService.getAllFeedbacks().subscribe(res => {
+      this.allFeedbacks = res;
+      this.computeAnalytics();
+    });
+    this.adminService.getAllRecognitions().subscribe(res => {
+      this.allRecognitions = res;
+      this.computeAnalytics();
+    });
+  }
+
+  computeAnalytics() {
+    if (!this.allRecognitions || this.allRecognitions.length === 0) {
+      this.recognitionBreakdown = [];
+      return;
+    }
+
+    // Group recognitions
+    const counts: { [key: string]: number } = {};
+    this.allRecognitions.forEach(r => {
+      counts[r.badgeType] = (counts[r.badgeType] || 0) + 1;
+    });
+
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+    let i = 0;
+
+    this.recognitionBreakdown = Object.keys(counts).map(key => {
+      const pct = Math.round((counts[key] / this.allRecognitions.length) * 100);
+      return {
+        type: key,
+        count: counts[key],
+        percentage: pct,
+        color: colors[i++ % colors.length]
+      };
+    }).sort((a, b) => b.count - a.count).slice(0, 4); // Top 4
+
+    // Mock weekly trend
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const todayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+
+    this.weeklyTrend = days.map((day, index) => {
+      // Randomize historical data, peak on today
+      let height = index === todayIndex ? 80 : Math.floor(Math.random() * 50) + 10;
+      if (index > todayIndex) height = 5; // Future days
+      return { day, height, isToday: index === todayIndex };
+    });
+
+    // Generate mock audits based on user activity
+    this.auditLogs = [
+      { date: new Date().toISOString(), action: 'System Backup Completed', user: 'System', status: 'Success' },
+      { date: new Date(Date.now() - 3600000).toISOString(), action: 'User Roles Updated', user: 'Admin', status: 'Success' },
+      { date: new Date(Date.now() - 7200000).toISOString(), action: 'Failed Login Attempt', user: 'Unknown', status: 'Failed' },
+      { date: new Date(Date.now() - 86400000).toISOString(), action: 'Feedback Category Added', user: 'Admin', status: 'Success' }
+    ];
   }
 
   loadMemberReport() {
@@ -139,11 +200,15 @@ export class AdminDashboard implements OnInit {
 
   addCategory() {
     if (!this.newCategory || this.categories.includes(this.newCategory)) return;
-    this.categories.push(this.newCategory);
-    this.newCategory = '';
+    this.adminService.addCategory(this.newCategory).subscribe(() => {
+      this.categories.push(this.newCategory);
+      this.newCategory = '';
+    });
   }
 
   removeCategory(cat: string) {
-    this.categories = this.categories.filter(c => c !== cat);
+    this.adminService.deleteCategory(cat).subscribe(() => {
+      this.categories = this.categories.filter(c => c !== cat);
+    });
   }
 }

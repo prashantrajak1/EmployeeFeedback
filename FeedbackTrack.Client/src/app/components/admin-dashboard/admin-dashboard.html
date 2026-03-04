@@ -152,41 +152,47 @@
                         <div class="metric-value green-text" style="font-size: 2rem;">{{ allRecognitions.length }}</div>
                     </div>
                 </div>
-                <!-- Activity Trend Chart -->
-                <div class="box-card" style="margin-top: 24px;">
-                    <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Platform Engagement Trend (Last
-                        7 Days)</h4>
-                    <div
-                        style="height: 180px; display: flex; align-items: flex-end; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
-                        <!-- Mock Bars -->
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 30%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Mon</span>
+                <div style="display: flex; gap: 24px;">
+                    <!-- Activity Trend Chart -->
+                    <div class="box-card" style="margin-top: 24px; flex: 1;">
+                        <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Platform Engagement Trend
+                        </h4>
+                        <div
+                            style="height: 180px; display: flex; align-items: flex-end; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
+                            <div *ngFor="let t of weeklyTrend"
+                                style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <div style="width: 100%; border-radius: 2px; transition: height 0.5s ease-out;"
+                                    [style.height]="t.height + '%'"
+                                    [style.background]="t.isToday ? '#3b82f6' : '#e2e8f0'"></div>
+                                <span style="font-size: 0.6rem; color: #94a3b8;"
+                                    [style.font-weight]="t.isToday ? '700' : '500'">{{ t.day }}</span>
+                            </div>
                         </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 45%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Tue</span>
+                    </div>
+
+                    <!-- Recognition Breakdown -->
+                    <div class="box-card" style="margin-top: 24px; flex: 1;">
+                        <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">Recognition Breakdown</h4>
+                        <div *ngIf="recognitionBreakdown.length > 0">
+                            <div *ngFor="let item of recognitionBreakdown" style="margin-bottom: 12px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                                    <span style="display: flex; align-items: center; gap: 6px;">
+                                        <div [style.background]="item.color"
+                                            style="width: 8px; height: 8px; border-radius: 50%;"></div>
+                                        {{ item.type }}
+                                    </span>
+                                    <span style="font-weight: 600;">{{ item.percentage }}%</span>
+                                </div>
+                                <div
+                                    style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden;">
+                                    <div [style.width]="item.percentage + '%'" [style.background]="item.color"
+                                        style="height: 100%; border-radius: 3px;"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 25%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Wed</span>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #3b82f6; height: 75%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8; font-weight: 700;">Thu</span>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 40%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Fri</span>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 15%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Sat</span>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                            <div style="width: 100%; background: #e2e8f0; height: 10%; border-radius: 2px;"></div>
-                            <span style="font-size: 0.6rem; color: #94a3b8;">Sun</span>
-                        </div>
+                        <div *ngIf="recognitionBreakdown.length === 0" class="empty-state">Not enough data to generate
+                            breakdown.</div>
                     </div>
                 </div>
             </div>
@@ -195,8 +201,33 @@
         <!-- Section: Settings -->
         <div *ngIf="activeSection === 'settings'" class="fade-in">
             <div class="box-card">
-                <h3 class="box-title">System Settings</h3>
-                <div class="empty-state">Audit logs and security policies are currently being integrated.</div>
+                <h3 class="box-title">System Settings & Audit Logs</h3>
+
+                <h4 style="margin-top: 24px; margin-bottom: 12px; color: #475569; font-size: 1rem;">Recent Audits</h4>
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Date / Time</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let log of auditLogs">
+                            <td style="color: #64748b; font-size: 0.85rem;">{{ log.date | date:'short' }}</td>
+                            <td style="font-weight: 500;">{{ log.action }}</td>
+                            <td>{{ log.user }}</td>
+                            <td>
+                                <span class="role-badge"
+                                    [style.background]="log.status === 'Success' ? '#dcfce7' : '#fee2e2'"
+                                    [style.color]="log.status === 'Success' ? '#16a34a' : '#ef4444'">
+                                    {{ log.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 

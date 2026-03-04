@@ -49,15 +49,7 @@ export class EmployeeDashboard implements OnInit {
     // We need to decode the token to get the ID or change the API to be "my-recognitions".
     // For now, let's decode the token here again or add a helper in AuthService.
 
-    // Quick hack: decode token to get ID
-    const token = this.authService.getToken();
-    let userId = 0;
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        userId = parseInt(payload['nameid'] || payload['sub'] || '0');
-      } catch (e) { console.error(e); }
-    }
+    const userId = this.user?.id || 0;
 
     this.feedbackService.getMyFeedback().subscribe(res => {
       this.feedbacks = res.map(f => ({ ...f, isExpanded: false }));
@@ -86,19 +78,27 @@ export class EmployeeDashboard implements OnInit {
     }
   }
 
+  get visibleFeedbacks(): any[] {
+    return this.feedbacks.slice(this.feedIndex, this.feedIndex + 3);
+  }
+
+  get visibleRecognitions(): any[] {
+    return this.recognitions.slice(this.recIndex, this.recIndex + 3);
+  }
+
   nextItem(type: 'feed' | 'rec') {
-    if (type === 'feed' && this.feedIndex < this.feedbacks.length - 1) {
-      this.feedIndex++;
-    } else if (type === 'rec' && this.recIndex < this.recognitions.length - 1) {
-      this.recIndex++;
+    if (type === 'feed' && this.feedIndex + 3 < this.feedbacks.length) {
+      this.feedIndex += 3;
+    } else if (type === 'rec' && this.recIndex + 3 < this.recognitions.length) {
+      this.recIndex += 3;
     }
   }
 
   prevItem(type: 'feed' | 'rec') {
     if (type === 'feed' && this.feedIndex > 0) {
-      this.feedIndex--;
+      this.feedIndex = Math.max(0, this.feedIndex - 3);
     } else if (type === 'rec' && this.recIndex > 0) {
-      this.recIndex--;
+      this.recIndex = Math.max(0, this.recIndex - 3);
     }
   }
 

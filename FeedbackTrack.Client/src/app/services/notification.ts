@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class NotificationService {
 
-    private apiUrl = `${environment.apiUrl}/notification`;
+    private apiUrl = `${environment.apiUrl}/notifications`;
 
     constructor(private http: HttpClient) { }
 
@@ -21,11 +21,11 @@ export class NotificationService {
         return this.http.post(`${this.apiUrl}/mark-read/${id}`, {});
     }
 
-    // Mock for real-time notification simulation
-    private notificationSubject = new BehaviorSubject<any>(null);
-    newNotification$ = this.notificationSubject.asObservable();
+    markAllAsRead(): Observable<any> {
+        return this.http.post(`${this.apiUrl}/mark-all-read`, {});
+    }
 
-    pushNotification(notification: any) {
-        this.notificationSubject.next(notification);
+    deleteNotification(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

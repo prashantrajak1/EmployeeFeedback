@@ -45,14 +45,19 @@
           <div class="notification-dropdown" *ngIf="showNotifications">
             <div class="notification-header">
               <span style="font-weight: 700; color: #1e293b;">Notifications</span>
-              <span style="font-size: 0.75rem; color: #6366f1; cursor: pointer;">Mark all read</span>
+              <span (click)="markAllRead()" style="font-size: 0.75rem; color: #6366f1; cursor: pointer;">Mark all
+                read</span>
             </div>
             <div class="notification-list">
               <div *ngFor="let n of notifications" class="notification-item" [class.unread]="!n.isRead"
-                (click)="markAsRead(n)">
-                <div style="font-size: 0.85rem; color: #1e293b; font-weight: 500;">{{ n.title }}</div>
-                <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">{{ n.message }}</div>
-                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 8px;">{{ n.createdAt | date:'shortTime' }}
+                (click)="markAsRead(n)" style="position: relative;">
+                <button (click)="deleteNotification($event, n)" class="notification-delete-btn"
+                  title="Delete">×</button>
+                <div style="font-size: 0.85rem; color: #1e293b; font-weight: 500; padding-right: 20px;">{{ n.title }}
+                </div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px; padding-right: 20px;">{{ n.message }}
+                </div>
+                <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 8px;">{{ n.date | date:'dd-MM-yyyy' }}
                 </div>
               </div>
               <div *ngIf="notifications.length === 0" style="padding: 30px; text-align: center; color: #94a3b8;">
@@ -120,9 +125,9 @@
 
 <!-- Global Toasts -->
 <div class="toast-container">
-  <div *ngIf="currentToast" class="toast" [class.toast-success]="currentToast.type === 'success'"
-    [class.toast-error]="currentToast.type === 'error'">
-    <span>{{ currentToast.message }}</span>
+  <div *ngIf="uiService.toast$ | async as toast" class="toast" [class.toast-success]="toast.type === 'success'"
+    [class.toast-error]="toast.type === 'error'">
+    <span>{{ toast.message }}</span>
     <button class="toast-close" (click)="uiService.clearToast()">×</button>
   </div>
 </div>

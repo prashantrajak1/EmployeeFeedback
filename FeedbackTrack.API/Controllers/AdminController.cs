@@ -30,12 +30,36 @@ namespace FeedbackTrack.API.Controllers
         }
 
         [HttpGet("categories")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCategories()
         {
-            // Placeholder: Returning hardcoded categories as they aren't in DB yet.
-            // In a real app, these would be a table.
-            var categories = new[] { "Collaboration", "Excellence", "Innovation", "Growth", "Ownership" };
+            var categories = await _context.TCategories.Select(c => c.Name).ToListAsync();
             return Ok(categories);
+        }
+
+        public class CategoryDto { public string Name { get; set; } = string.Empty; }
+
+        [HttpPost("categories")]
+        public async Task<IActionResult> AddCategory([FromBody] CategoryDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest();
+            if (await _context.TCategories.AnyAsync(c => c.Name == dto.Name)) return Ok(); // Idempotent
+            
+            _context.TCategories.Add(new TCategory { Name = dto.Name });
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("categories/{name}")]
+        public async Task<IActionResult> DeleteCategory(string name)
+        {
+            var category = await _context.TCategories.FirstOrDefaultAsync(c => c.Name == name);
+            if (category != null)
+            {
+                _context.TCategories.Remove(category);
+                await _context.SaveChangesAsync();
+            }
+            return Ok();
         }
 
         [HttpGet("all-feedbacks")]

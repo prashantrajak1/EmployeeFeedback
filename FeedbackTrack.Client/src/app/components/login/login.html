@@ -33,13 +33,14 @@
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" [(ngModel)]="email" name="email" required
-                            placeholder="Enter your email">
+                            placeholder="Enter your email" [class.input-error]="errorMessage && email.length === 0">
                     </div>
 
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" id="password" [(ngModel)]="password" name="password" required
-                            placeholder="Enter your password">
+                            placeholder="Enter your password"
+                            [class.input-error]="errorMessage && password.length === 0">
                     </div>
 
                     <div class="form-group">
@@ -97,21 +98,28 @@
                 <div class="form-group">
                     <label for="regEmail">Email</label>
                     <input type="email" id="regEmail" [(ngModel)]="regUser.email" name="regEmail" required
-                        placeholder="name@company.com">
+                        placeholder="name@company.com" [class.input-error]="regEmailError">
                     <div *ngIf="regEmailError" class="error-msg-small">{{ regEmailError }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="regDepartment">Department</label>
+                    <input type="text" id="regDepartment" [(ngModel)]="regUser.department" name="regDepartment" required
+                        placeholder="e.g. Engineering, HR, Sales">
                 </div>
 
                 <div class="form-group">
                     <label for="regPassword">Password</label>
                     <input type="password" id="regPassword" [(ngModel)]="regUser.password" name="regPassword" required
-                        placeholder="Create a strong password">
+                        placeholder="Create a strong password" [class.input-error]="regPasswordError">
                     <div *ngIf="regPasswordError" class="error-msg-small">{{ regPasswordError }}</div>
                 </div>
 
                 <div class="form-group">
                     <label for="regConfirmPassword">Confirm Password</label>
                     <input type="password" id="regConfirmPassword" [(ngModel)]="regUser.confirmPassword"
-                        name="regConfirmPassword" required placeholder="Type password again">
+                        name="regConfirmPassword" required placeholder="Type password again"
+                        [class.input-error]="regConfirmPasswordError">
                     <div *ngIf="regConfirmPasswordError" class="error-msg-small">{{ regConfirmPasswordError }}</div>
                 </div>
 

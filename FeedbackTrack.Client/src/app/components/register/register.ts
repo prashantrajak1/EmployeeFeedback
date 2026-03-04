@@ -80,12 +80,6 @@ export class Register {
       next: (res) => {
         this.isLoading = false;
         alert('Registration successful! Please login.');
-        this.notificationService.pushNotification({
-          title: 'New User Registered',
-          message: `${this.user.name} has joined the platform as ${this.user.role}.`,
-          isAdminOnly: true,
-          createdAt: new Date().toISOString()
-        });
         this.router.navigate(['/login']);
       },
       error: (err) => {

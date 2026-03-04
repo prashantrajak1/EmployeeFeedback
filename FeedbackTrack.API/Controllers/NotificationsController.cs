@@ -40,5 +40,23 @@ namespace FeedbackTrack.API.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC usp_Notification_MarkAsRead @p0", id);
             return Ok();
         }
+
+        [HttpPost("mark-all-read")]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            var userId = int.Parse(userIdStr);
+            await _context.Database.ExecuteSqlRawAsync("EXEC usp_Notification_MarkAllRead @p0", userId);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNotification(int id)
+        {
+            await _context.Database.ExecuteSqlRawAsync("EXEC usp_Notification_Delete @p0", id);
+            return Ok();
+        }
     }
 }

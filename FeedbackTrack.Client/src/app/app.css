@@ -2,23 +2,31 @@
 .toast-container {
     position: fixed;
     top: 24px;
-    right: 24px;
-    z-index: 9999;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    pointer-events: none;
+    /* Allow clicking through container but not toasts */
 }
 
 .toast {
+    pointer-events: auto;
+    /* Re-enable for toast itself */
     background: #10b981;
     color: white;
     padding: 12px 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 50px;
+    /* More modern rounded look */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
     gap: 12px;
-    animation: toastSlideIn 0.3s ease-out;
+    animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    min-width: 300px;
+    justify-content: center;
 }
 
 .toast-close {
@@ -48,14 +56,14 @@
     border: 1px solid #dc2626;
 }
 
-@keyframes slideIn {
+@keyframes toastSlideIn {
     from {
-        transform: translateX(100%);
+        transform: translateY(-100%);
         opacity: 0;
     }
 
     to {
-        transform: translateX(0);
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -73,6 +81,14 @@
     overflow: hidden;
     border: 1px solid #e2e8f0;
     animation: fadeIn 0.15s ease-out;
+}
+
+@media (max-width: 768px) {
+    .notification-dropdown {
+        width: 300px;
+        right: -50px;
+        /* Adjusting for narrow screens */
+    }
 }
 
 .notification-header {
@@ -130,6 +146,34 @@
     align-items: center;
     justify-content: center;
     border: 2px solid #1e40af;
+}
+
+.notification-delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}
+
+.notification-item:hover .notification-delete-btn {
+    opacity: 1;
+}
+
+.notification-delete-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
 }
 
 /* Slide Down Details */

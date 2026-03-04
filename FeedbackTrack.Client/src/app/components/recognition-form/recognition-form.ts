@@ -6,6 +6,8 @@ import { RecognitionService } from '../../services/recognition';
 import { UserService } from '../../services/user';
 import { UiService } from '../../services/ui.service';
 import { NotificationService } from '../../services/notification';
+import { Location } from '@angular/common';
+import { AdminService } from '../../services/admin';
 
 @Component({
   selector: 'app-recognition-form',
@@ -26,18 +28,35 @@ export class RecognitionForm implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  badges = ['Excellent Work', 'Team Player', 'Problem Solver', 'Innovation', 'Customer Focus'];
+  badges: string[] = [];
 
   constructor(
     private recognitionService: RecognitionService,
     private userService: UserService,
     private router: Router,
     private uiService: UiService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private location: Location,
+    private adminService: AdminService
   ) { }
 
   ngOnInit() {
     this.loadUsers();
+    this.loadBadges();
+  }
+
+  loadBadges() {
+    this.adminService.getCategories().subscribe({
+      next: (res) => {
+        this.badges = res;
+        if (this.badges.length > 0) {
+          this.recognition.badgeType = this.badges[0];
+        } else {
+          this.recognition.badgeType = 'Custom Badge';
+        }
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   loadUsers() {
@@ -70,16 +89,9 @@ export class RecognitionForm implements OnInit {
         this.isLoading = false;
         this.uiService.showToast('Kudos sent successfully!', 'success');
 
-        this.notificationService.pushNotification({
-          title: 'Recognition Received!',
-          message: `You earned the "${payload.badgeType}" badge!`,
-          userId: payload.toUserId,
-          createdAt: new Date().toISOString()
-        });
-
         setTimeout(() => {
           this.router.navigate(['/employee-dashboard']);
-        }, 1500);
+        }, 2000);
       },
       error: (err) => {
         this.isLoading = false;
@@ -87,5 +99,9 @@ export class RecognitionForm implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }
