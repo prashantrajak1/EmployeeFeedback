@@ -30,4 +30,4 @@ C:\Program Files\dotnet\sdk\8.0.416\Microsoft.Common.CurrentVersion.targets(5321
     10 Warning(s)
     2 Error(s)
 
-Time Elapsed 00:00:13.01
+Time Elapsed 00:00:13.32
