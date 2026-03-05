@@ -1,6 +1,7 @@
 using FeedbackTrack.API.DTOs;
 using FeedbackTrack.API.Models;
 using FeedbackTrack.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -46,10 +47,18 @@ namespace FeedbackTrack.API.Controllers
             return Ok(users);
         }
 
-        [HttpGet("active-sessions")]
-        public IActionResult GetActiveSessions()
+        [HttpGet("departments")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDepartments()
         {
-            var activeIds = _userService.GetActiveUserIds();
+            var departments = await _userService.GetDepartmentsAsync();
+            return Ok(departments);
+        }
+
+        [HttpGet("active-sessions")]
+        public async Task<IActionResult> GetActiveSessions()
+        {
+            var activeIds = await _userService.GetActiveUserIdsAsync();
             return Ok(activeIds);
         }
     }

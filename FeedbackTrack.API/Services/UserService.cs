@@ -126,13 +126,19 @@ namespace FeedbackTrack.API.Services
             _activeSessions[userId] = DateTime.UtcNow;
         }
 
-        public List<int> GetActiveUserIds()
+        public Task<List<int>> GetActiveUserIdsAsync()
         {
             var cutoff = DateTime.UtcNow.AddHours(-1);
-            return _activeSessions
+            var activeIds = _activeSessions
                 .Where(kv => kv.Value >= cutoff)
                 .Select(kv => kv.Key)
                 .ToList();
+            return Task.FromResult(activeIds);
+        }
+
+        public async Task<List<string>> GetDepartmentsAsync()
+        {
+            return await _context.TDepartments.Select(d => d.DepartmentName).ToListAsync();
         }
     }
 }

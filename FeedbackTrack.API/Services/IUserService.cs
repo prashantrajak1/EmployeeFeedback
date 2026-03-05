@@ -10,6 +10,7 @@ namespace FeedbackTrack.API.Services
         Task<TUser?> GetUserByIdAsync(int id);
         Task<List<TUser>> GetAllUsersAsync();
         void RecordActivity(int userId);
-        List<int> GetActiveUserIds();
+        Task<List<int>> GetActiveUserIdsAsync(); // Ensure consistency if needed, wait let me check IUserService
+        Task<List<string>> GetDepartmentsAsync();
     }
 }

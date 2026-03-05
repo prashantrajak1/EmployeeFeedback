@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { NotificationService } from '../../services/notification';
+import { UserService } from '../../services/user';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { NotificationService } from '../../services/notification';
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
-export class Register {
+export class Register implements OnInit {
   user = {
     name: '',
     email: '',
@@ -28,12 +29,30 @@ export class Register {
   confirmPasswordError = '';
 
   isLoading = false;
+  departments: string[] = [];
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private userService: UserService
   ) { }
+
+  ngOnInit() {
+    this.loadDepartments();
+  }
+
+  loadDepartments() {
+    this.userService.getDepartments().subscribe({
+      next: (res: string[]) => {
+        this.departments = res;
+        if (this.departments.length > 0 && !this.user.department) {
+          this.user.department = this.departments[0];
+        }
+      },
+      error: (err: any) => console.error(err)
+    });
+  }
 
   validateForm(): boolean {
     this.emailError = '';

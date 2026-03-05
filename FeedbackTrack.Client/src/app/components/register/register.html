@@ -23,8 +23,9 @@
 
             <div class="form-group">
                 <label for="department">Department</label>
-                <input type="text" id="department" [(ngModel)]="user.department" name="department" required
-                    placeholder="Engineering">
+                <select id="department" [(ngModel)]="user.department" name="department" required>
+                    <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+                </select>
             </div>
 
             <div class="form-group">
