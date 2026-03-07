@@ -106,6 +106,21 @@ namespace FeedbackTrack.API.Controllers
             return Ok(reviews);
         }
 
+        [HttpGet("my-reviews")]
+        public async Task<IActionResult> GetMyReviews()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            
+            // Get all reviews for feedbacks received by this user
+            var reviews = await _context.TReviews
+                .Include(r => r.Feedback)
+                .Where(r => r.Feedback!.ToUserId == userId)
+                .ToListAsync();
+
+            // We only need to return the review status to the employee, but returning full object is fine
+            return Ok(reviews);
+        }
+
         [HttpPost("review")]
         [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> SubmitReview(ReviewCreateDto dto)

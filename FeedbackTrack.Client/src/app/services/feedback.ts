@@ -29,6 +29,10 @@ export class FeedbackService {
     return this.http.get<any[]>(`${this.apiUrl}/reviews/user/${userId}`);
   }
 
+  getMyReviews(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/my-reviews`);
+  }
+
   submitReview(review: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/review`, review);
   }

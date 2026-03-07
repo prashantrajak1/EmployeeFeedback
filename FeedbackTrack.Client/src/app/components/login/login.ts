@@ -1,9 +1,10 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { UserService } from '../../services/user';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { AuthService } from '../../services/auth';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login {
+export class Login implements OnInit {
   // Login State
   email = '';
   password = '';
@@ -30,18 +31,44 @@ export class Login {
     department: '',
     role: 'Employee' // Default
   };
+  departments: string[] = [];
   regErrorMessage = '';
+  regSuccessMessage = '';
   regEmailError = '';
   regPasswordError = '';
   regConfirmPasswordError = '';
   isRegLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.loadDepartments();
+  }
+
+  loadDepartments() {
+    this.userService.getDepartments().subscribe({
+      next: (res) => {
+        this.departments = res;
+        // set default if list is not empty and department not yet set
+        if (this.departments.length > 0 && !this.regUser.department) {
+          this.regUser.department = this.departments[0];
+        }
+      },
+      error: (err) => {
+        console.error("Failed to load departments", err);
+      }
+    });
+  }
 
   toggleView() {
     this.isRegistering = !this.isRegistering;
     this.errorMessage = '';
     this.regErrorMessage = '';
+    this.regSuccessMessage = '';
   }
 
   // ----------------LOGIN LOGIC----------------
@@ -104,6 +131,7 @@ export class Login {
 
   onRegister() {
     this.regErrorMessage = '';
+    this.regSuccessMessage = '';
 
     if (!this.validateRegForm()) {
       return;
@@ -115,8 +143,11 @@ export class Login {
     this.authService.register(registerPayload).subscribe({
       next: (res) => {
         this.isRegLoading = false;
-        alert('Registration successful! You may now log in.');
+        this.regSuccessMessage = 'registered successfully, please login';
         this.RegFormReset();
+
+        // Optional: auto-switch to login view after a delay, or keep them here to see the message.
+        // setTimeout(() => this.toggleView(), 3000); 
       },
       error: (err) => {
         this.isRegLoading = false;

@@ -52,8 +52,17 @@ export class EmployeeDashboard implements OnInit {
     const userId = this.user?.id || 0;
 
     this.feedbackService.getMyFeedback().subscribe(res => {
-      this.feedbacks = res.map(f => ({ ...f, isExpanded: false }));
-      this.checkLoading();
+      this.feedbackService.getMyReviews().subscribe(reviews => {
+        this.feedbacks = res.map(f => {
+          const fbReview = reviews.find(r => r.feedbackId === f.id);
+          return {
+            ...f,
+            isExpanded: false,
+            reviewStatus: fbReview ? fbReview.comments : 'Pending'
+          };
+        });
+        this.checkLoading();
+      });
     });
 
     if (userId > 0) {

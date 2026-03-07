@@ -88,6 +88,11 @@
                 {{ regErrorMessage }}
             </div>
 
+            <div *ngIf="regSuccessMessage" class="success-msg text-center mb-3"
+                style="color: var(--success-color); background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 6px; font-weight: 500;">
+                {{ regSuccessMessage }}
+            </div>
+
             <form (ngSubmit)="onRegister()">
                 <div class="form-group">
                     <label for="regName">Full Name</label>
@@ -104,8 +109,9 @@
 
                 <div class="form-group">
                     <label for="regDepartment">Department</label>
-                    <input type="text" id="regDepartment" [(ngModel)]="regUser.department" name="regDepartment" required
-                        placeholder="e.g. Engineering, HR, Sales">
+                    <select id="regDepartment" [(ngModel)]="regUser.department" name="regDepartment" required>
+                        <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -132,7 +138,7 @@
                 </div>
 
                 <button type="submit" class="btn auth-btn register-btn" [disabled]="isRegLoading">
-                    {{ isRegLoading ? 'Signing up...' : 'Sign Up' }}
+                    {{ isRegLoading ? 'Registering...' : 'Register' }}
                 </button>
 
                 <div class="auth-toggle-link">

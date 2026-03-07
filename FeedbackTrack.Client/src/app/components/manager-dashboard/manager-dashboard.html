@@ -99,11 +99,16 @@
                                 [ngClass]="teamFeedback[reviewIndex].reviews.length > 0 ? 'status-reviewed' : 'status-pending'">
                                 {{ teamFeedback[reviewIndex].reviews.length > 0 ? 'Reviewed' : 'Pending Review' }}
                             </div>
-                            <div class="input-group">
-                                <input type="text" [(ngModel)]="reviewCommentMap[teamFeedback[reviewIndex].id]"
-                                    placeholder="Add manager insight..." class="insight-input">
-                                <button (click)="submitReview(teamFeedback[reviewIndex].id)"
-                                    class="btn btn-blue btn-tiny">Post</button>
+                            <div class="input-group" *ngIf="teamFeedback[reviewIndex].reviews.length === 0"
+                                style="gap: 8px;">
+                                <button (click)="submitReview(teamFeedback[reviewIndex].id, 'Reviewed by manager')"
+                                    class="btn bg-btn-green btn-tiny" title="Mark as Reviewed">
+                                    <span style="font-weight: bold;">✔</span>
+                                </button>
+                                <button (click)="submitReview(teamFeedback[reviewIndex].id, 'Not reviewed')"
+                                    class="btn btn-danger btn-tiny" title="Mark as Not Reviewed">
+                                    <span style="font-weight: bold;">✖</span>
+                                </button>
                             </div>
                         </div>
                     </div>

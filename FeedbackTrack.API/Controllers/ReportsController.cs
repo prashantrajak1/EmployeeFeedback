@@ -137,8 +137,8 @@ namespace FeedbackTrack.API.Controllers
             try
             {
                 var users = await _context.TUsers.Include(u => u.Department).ToListAsync();
-                var feedbacks = await _context.TFeedbacks.ToListAsync();
-                var recognitions = await _context.TRecognitions.ToListAsync();
+                var feedbacks = await _context.TFeedbacks.Include(f => f.FromUser).ToListAsync();
+                var recognitions = await _context.TRecognitions.Include(r => r.FromUser).ToListAsync();
 
                 var report = users.Select(u => new
                 {
@@ -152,8 +152,8 @@ namespace FeedbackTrack.API.Controllers
                     KudosReceived = recognitions.Count(r => r.ToUserId == u.Id),
                     TotalPoints = recognitions.Where(r => r.ToUserId == u.Id).Sum(r => r.Points),
                     // Add content aggregations
-                    RecentFeedbacks = string.Join(" | ", feedbacks.Where(f => f.ToUserId == u.Id).Take(5).Select(f => f.Description.Replace("\"", "'").Replace("\n", " "))),
-                    RecentKudos = string.Join(" | ", recognitions.Where(r => r.ToUserId == u.Id).Take(5).Select(r => $"[{r.BadgeType}] {r.Comments.Replace("\"", "'").Replace("\n", " ")}"))
+                    RecentFeedbacks = string.Join(" | ", feedbacks.Where(f => f.ToUserId == u.Id).OrderByDescending(f => f.Date).Take(5).Select(f => $"[{(f.IsAnonymous ? "Anonymous" : f.FromUser?.Name ?? "Unknown")} on {f.Date:dd-MMM-yyyy}] {f.Description.Replace("\"", "'").Replace("\n", " ")}")),
+                    RecentKudos = string.Join(" | ", recognitions.Where(r => r.ToUserId == u.Id).OrderByDescending(r => r.Date).Take(5).Select(r => $"[{r.FromUser?.Name ?? "Unknown"} on {r.Date:dd-MMM-yyyy} - {r.BadgeType}] {r.Comments.Replace("\"", "'").Replace("\n", " ")}"))
                 }).OrderByDescending(x => x.TotalPoints).ToList();
 
                 var csv = new StringBuilder();

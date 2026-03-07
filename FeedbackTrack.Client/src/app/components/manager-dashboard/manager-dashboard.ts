@@ -177,12 +177,11 @@ export class ManagerDashboard implements OnInit {
     }
   }
 
-  submitReview(feedbackId: number) {
-    const comments = this.reviewCommentMap[feedbackId];
+  submitReview(feedbackId: number, comments: string) {
     if (!comments || !comments.trim()) return;
 
     this.feedbackService.submitReview({ feedbackId, comments }).subscribe(() => {
-      this.reviewCommentMap[feedbackId] = '';
+      this.uiService.showToast(`Feedback marked as: ${comments}`);
       this.loadTeamFeedback(); // Refresh to show new review
     });
   }

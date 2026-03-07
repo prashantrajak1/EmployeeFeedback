@@ -143,6 +143,10 @@
                                     f.description }}"</p>
                                 <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 8px;">{{
                                     f.date | date:'mediumDate' }}</div>
+                                <div style="font-size: 0.75rem; margin-top: 8px; font-weight: 500;"
+                                    [ngClass]="f.reviewStatus === 'Reviewed by manager' ? 'green-text' : (f.reviewStatus === 'Not reviewed' ? 'red-text' : 'orange-text')">
+                                    {{ f.reviewStatus === 'Pending' ? '' : f.reviewStatus }}
+                                </div>
                             </div>
                         </div>
                         <div *ngIf="feedbacks.length === 0" class="empty-state">No feedback records found.</div>
