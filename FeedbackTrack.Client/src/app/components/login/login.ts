@@ -1,10 +1,10 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { UserService } from '../../services/user';
+import { finalize, timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +42,8 @@ export class Login implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -53,10 +54,10 @@ export class Login implements OnInit {
     this.userService.getDepartments().subscribe({
       next: (res) => {
         this.departments = res;
-        // set default if list is not empty and department not yet set
         if (this.departments.length > 0 && !this.regUser.department) {
           this.regUser.department = this.departments[0];
         }
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error("Failed to load departments", err);
@@ -69,12 +70,14 @@ export class Login implements OnInit {
     this.errorMessage = '';
     this.regErrorMessage = '';
     this.regSuccessMessage = '';
+    this.cdr.detectChanges();
   }
 
   // ----------------LOGIN LOGIC----------------
   onLogin() {
     this.isLoading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (res) => {
@@ -83,6 +86,7 @@ export class Login implements OnInit {
 
         if (actualRole !== this.selectedRole) {
           this.errorMessage = `Access Denied: You are not a ${this.selectedRole}. Your role is ${actualRole}.`;
+          this.cdr.detectChanges();
           return; // Stop navigation
         }
 
@@ -97,6 +101,7 @@ export class Login implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = 'Invalid email or password';
+        this.cdr.detectChanges();
         console.error(err);
       }
     });
@@ -134,31 +139,42 @@ export class Login implements OnInit {
     this.regSuccessMessage = '';
 
     if (!this.validateRegForm()) {
+      this.isRegLoading = false;
+      this.cdr.detectChanges();
       return;
     }
 
     this.isRegLoading = true;
+    this.cdr.detectChanges();
+
     const { confirmPassword, ...registerPayload } = this.regUser;
 
-    this.authService.register(registerPayload).subscribe({
-      next: (res) => {
-        this.isRegLoading = false;
-        this.regSuccessMessage = 'registered successfully, please login';
-        this.RegFormReset();
-
-        // Optional: auto-switch to login view after a delay, or keep them here to see the message.
-        // setTimeout(() => this.toggleView(), 3000); 
-      },
-      error: (err) => {
-        this.isRegLoading = false;
-        this.regErrorMessage = 'Registration failed. Email might be in use.';
-        console.error(err);
-      }
-    });
+    this.authService.register(registerPayload)
+      .pipe(
+        timeout(15000), // Timeout after 15 seconds to prevent eternal hang
+        finalize(() => {
+          this.isRegLoading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.regSuccessMessage = 'registered successfully, please login';
+          this.RegFormReset();
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.regErrorMessage = err.name === 'TimeoutError'
+            ? 'Registration timed out. Please try again.'
+            : 'Registration failed. Email might be in use.';
+          this.cdr.detectChanges();
+          console.error('Registration API error:', err);
+        }
+      });
   }
 
   RegFormReset() {
-    this.regUser = { name: '', email: '', password: '', confirmPassword: '', department: '', role: 'Employee' };
+    this.regUser = { name: '', email: '', password: '', confirmPassword: '', department: this.departments[0] || 'Employee', role: 'Employee' };
     this.regEmailError = '';
     this.regPasswordError = '';
     this.regConfirmPasswordError = '';

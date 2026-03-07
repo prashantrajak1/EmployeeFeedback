@@ -152,8 +152,8 @@ namespace FeedbackTrack.API.Controllers
                     KudosReceived = recognitions.Count(r => r.ToUserId == u.Id),
                     TotalPoints = recognitions.Where(r => r.ToUserId == u.Id).Sum(r => r.Points),
                     // Add content aggregations
-                    RecentFeedbacks = string.Join(" | ", feedbacks.Where(f => f.ToUserId == u.Id).OrderByDescending(f => f.Date).Take(5).Select(f => $"[{(f.IsAnonymous ? "Anonymous" : f.FromUser?.Name ?? "Unknown")} on {f.Date:dd-MMM-yyyy}] {f.Description.Replace("\"", "'").Replace("\n", " ")}")),
-                    RecentKudos = string.Join(" | ", recognitions.Where(r => r.ToUserId == u.Id).OrderByDescending(r => r.Date).Take(5).Select(r => $"[{r.FromUser?.Name ?? "Unknown"} on {r.Date:dd-MMM-yyyy} - {r.BadgeType}] {r.Comments.Replace("\"", "'").Replace("\n", " ")}"))
+                    RecentFeedbacks = string.Join("\n", feedbacks.Where(f => f.ToUserId == u.Id).OrderByDescending(f => f.Date).Take(5).Select(f => $"[{(f.IsAnonymous ? "Anonymous" : f.FromUser?.Name ?? "Unknown")} on {f.Date:dd-MMM-yyyy}] {f.Description.Replace("\"", "'").Replace("\n", " ")}")),
+                    RecentKudos = string.Join("\n", recognitions.Where(r => r.ToUserId == u.Id).OrderByDescending(r => r.Date).Take(5).Select(r => $"[{r.FromUser?.Name ?? "Unknown"} on {r.Date:dd-MMM-yyyy} - {r.BadgeType}] {r.Comments.Replace("\"", "'").Replace("\n", " ")}"))
                 }).OrderByDescending(x => x.TotalPoints).ToList();
 
                 var csv = new StringBuilder();

@@ -136,9 +136,10 @@ namespace FeedbackTrack.API.Services
             return Task.FromResult(activeIds);
         }
 
-        public async Task<List<string>> GetDepartmentsAsync()
+        public Task<List<string>> GetDepartmentsAsync()
         {
-            return await _context.TDepartments.Select(d => d.DepartmentName).ToListAsync();
+            var allowedDepartments = new List<string> { "HR", "Sales", "IT", "R&D", "Finance", "Operations" };
+            return Task.FromResult(allowedDepartments);
         }
     }
 }
